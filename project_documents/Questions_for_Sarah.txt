@@ -1,0 +1,12 @@
+
+BGMP ML
+10/03/2019
+
+1. Is the program/scrip for labeling the images?
+2. Shouldn't the datasets already be labled? how can we access that data?
+3. Have you tried Mask R-CNN already? If so how did it go? Any tips other than continuing to read literature?
+4. 
+
+
+Need to read more into RetinaNet to have more questions about that.
+
