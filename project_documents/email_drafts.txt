@@ -1,0 +1,54 @@
+
+
+To: Sarah and Phil
+CC: stacey, leslie, clay?
+Subject: 2019 ML project update
+
+Hi Sarah and Phil,  (Should we use Dr. Stednitz and Dr. Washbourne?)
+
+We are writing you today with some potential good news. Last week we focused on literature review and making sure we knew enough about these models before trying to fit them 
+to our problem. We chose 3 models that we want to move forward with, all of which have different nuances and trade-offs as seen below. All three PDFs to the papers will be attatched.
+- DoGNet: Utilizes difference of gaussian (DoG) filters to lower the amount of training parameters needed, ultimately lowering the training input data needed. 2 fully annotated images needed.
+- SynQuant: Unsupervised model that utilizes order statistics to detect synapses. No training data needed but we needed 1-2 fully annotated images to test the accuracy and validate the model.
+- UNet: **Jared can you add a few words here please** At least 2 fully annotated images is needed for this model.
+
+Our goal is to try all three models to the best of our ability and determine at that point which one would be the best to solve our problem. Over the weekend we were 
+able to get SynQuant running and even potentially identifying x and y locations of synapses. The accuracy at which it is doing so we won't know until we have something
+to compare it to. We attempted to get DoGNet running this weekend as well with much less success due to bugs in the authors code. We are currently waiting for an email
+response from the author. 
+
+To be able to move forward with our next steps we are going to need 1, preferably 2 fully annotated images. What we mean by fully annotated is the x and y locations of the 
+centroids of all of the synapses. We will then be able to write a script to turn those locations into pixel-by-pixel image map. I know that is a lot to ask, and we really 
+appreciate your willingness to help and get this project going.
+
+
+Best,
+
+Nick Wagner, Jared Galloway, Annie Wang
+
+
+
+
+
+
+
+To: Jake Searcy
+Subject: 2019 ML project update/Talapas usage
+
+
+Good morning Jake,
+
+We are writing you today with some potential good news. Last week we focused on literature review and making sure we knew enough about these models before trying to fit them 
+to our problem. We chose 3 models that we want to move forward with, all of which have different nuances and trade-offs as seen below.
+- DoGNet: Utilizes difference of gaussian (DoG) filters to lower the amount of training parameters needed, ultimately lowering the training input data needed. 2 fully annotated images needed.
+- SynQuant: Unsupervised model that utilizes order statistics to detect synapses. No training data needed but we needed 1-2 fully annotated images to test the accuracy and validate the model.
+- UNet: **Jared can you add a few words here please** At least 2 fully annotated images is needed for this model.
+
+We were able to get one of the models working over the weekend, and now that we are about to start doing some serious training we were wondering about GPU usage on Talapas. 
+What are your thoughts on that? Is there any way we will be able to have access without racking up a bill for BGMP? ** Jared add your stuff here about docker or whatever 
+you wanted to ask** Thanks again for being a mentor to us throughout this project!
+
+
+Best,
+
+Nick Wagner, Annie Wang, Jared Galloway
