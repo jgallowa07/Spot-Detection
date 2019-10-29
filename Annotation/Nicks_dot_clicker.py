@@ -32,9 +32,25 @@ def draw_circle(event,x,y,flags,param):
         format_output(x,y)
 
 
+image_input = int(input("Please enter a value between 1-6. Corresponding with which image you would like to start with:  "))
+seen_flag = False
+
 
 for number in ['1','2']:
+    if(image_input == 4 or image_input == 5 or image_input == 6):
+        if(seen_flag == False):
+            seen_flag = True
+            continue
     for letter in ['g','s','z']:
+        if(image_input == 2 or image_input == 5):
+            image_input = 0
+            print('test2')
+            continue
+        if(image_input == 3 or image_input == 6):
+            image_input = 2
+            print('test1')
+            continue
+
         current_output = IMAGE_BASE + number + '-' + letter + '_output.csv'
         current_image = IMAGE_BASE + number + '-' + letter + '.bmp'
 
