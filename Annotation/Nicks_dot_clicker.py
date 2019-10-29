@@ -50,6 +50,5 @@ for number in ['1','2']:
             if cv2.waitKey(20) & 0xFF == 27:
                 break
         
-        print("test")
         cv2.destroyAllWindows()
         CURRENT_FP.close()
