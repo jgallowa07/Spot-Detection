@@ -55,7 +55,7 @@ for number in ['1','2']:
         current_image = IMAGE_BASE + number + '-' + letter + '.bmp'
 
         CURRENT_IMG = current_image
-        CURRENT_FP = open('annotation_output/' + current_output, 'w')
+        CURRENT_FP = open('annotation_output/' + current_output, 'a')
 
         img = cv2.imread(current_image)
         cv2.namedWindow('img')
