@@ -4,6 +4,7 @@ import argparse
 import matplotlib.pyplot as plt
 from PIL import Image
 from skimage.draw import circle
+from skimage.measure import label, regionprops
 
 def get_args():
     parser = argparse.ArgumentParser(description="A program to convert clicked annotation into an image")
@@ -32,6 +33,10 @@ for i in range(len(COORDINATES)):
     rr, cc = circle(x, y, 2)
     IMAGE[rr,cc] = 1
     XY.append([x,y])
+
+props = regionprops(IMAGE)
+print(props[0].centroid)
+print('test')
 
 plt.imshow(IMAGE, cmap="gray")
 plt.show()
