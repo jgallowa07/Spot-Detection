@@ -14,9 +14,9 @@ def get_args():
     return parser.parse_args()
 
 args = get_args()               # calls get_args method from above assigns the arguments to args
-G_FILE = args.gfile          # assigning forward read file name as string to global varible
-S_FILE = args.sfile          # assigning forward read file name as string to global varible
-Z_FILE = args.zfile          # assigning forward read file name as string to global varible
+G_FILE = args.gfile          # assigning g annotation file name as string to global varible
+S_FILE = args.sfile          # assigning s annotation file name as string to global varible
+Z_FILE = args.zfile          # assigning z annotation file name as string to global varible
 
 
 IMAGE1 = np.zeros((1024,1024), dtype=np.uint8)
