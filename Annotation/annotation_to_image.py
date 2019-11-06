@@ -8,35 +8,112 @@ from skimage.measure import label, regionprops
 
 def get_args():
     parser = argparse.ArgumentParser(description="A program to convert clicked annotation into an image")
-    parser.add_argument("-i", "--input", help="use to specify the input file name", required=True, type = str)
+    parser.add_argument("-g", "--gfile", help="use to specify the g file name", required=True, type = str)
+    parser.add_argument("-s", "--sfile", help="use to specify the s file name", required=True, type = str)
+    parser.add_argument("-z", "--zfile", help="use to specify the z file name", required=True, type = str)
     return parser.parse_args()
 
 args = get_args()               # calls get_args method from above assigns the arguments to args
-input_data = args.input          # assigning forward read file name as string to global varible
+G_FILE = args.gfile          # assigning forward read file name as string to global varible
+S_FILE = args.sfile          # assigning forward read file name as string to global varible
+Z_FILE = args.zfile          # assigning forward read file name as string to global varible
 
 
-IMAGE = np.zeros((1024,1024), dtype=np.uint8)
-COORDINATES = []
-XY = []
+IMAGE1 = np.zeros((1024,1024), dtype=np.uint8)
+IMAGE2 = np.zeros((1024,1024), dtype=np.uint8)
+IMAGE3 = np.zeros((1024,1024), dtype=np.uint8)
+COLOCALIZED = np.zeros((1024,1024), dtype=np.uint8)
+COORDINATES1 = []
+COORDINATES2 = []
+COORDINATES3 = []
+XY1 = []
+XY2 = []
+XY3 = []
 
 
-with open(input_data, 'r') as inFile:
-    for line in inFile:
+with open(G_FILE, 'r') as gfile, open(S_FILE, 'r') as sfile, open(Z_FILE, 'r') as zfile:
+    for line in gfile:
         line = line.strip().split(',')
         curr_coordinates = [line[1], line[2], line[3], line[4]]
-        COORDINATES.append(curr_coordinates)
+        COORDINATES1.append(curr_coordinates)
+    for line in sfile:
+        line = line.strip().split(',')
+        curr_coordinates = [line[1], line[2], line[3], line[4]]
+        COORDINATES2.append(curr_coordinates)
+    for line in zfile:
+        line = line.strip().split(',')
+        curr_coordinates = [line[1], line[2], line[3], line[4]]
+        COORDINATES3.append(curr_coordinates)
 
-for i in range(len(COORDINATES)):
-    x = int(COORDINATES[i][0]) + 4
-    y = int(COORDINATES[i][1]) + 4
+for i in range(len(COORDINATES1)):
+    x = int(COORDINATES1[i][0]) + 4
+    y = int(COORDINATES1[i][1]) + 4
 
     rr, cc = circle(x, y, 2)
-    IMAGE[rr,cc] = 1
-    XY.append([x,y])
 
-props = regionprops(IMAGE)
-print(props[0].centroid)
-print('test')
+    count = 0
+    for i in range(len(rr)):
+        if (rr[i-count] >= 1024 or rr[i-count] < 0):
+            rr = np.delete(rr, i-count)
+            cc = np.delete(cc, i-count)
+            count += 1
 
-plt.imshow(IMAGE, cmap="gray")
+    IMAGE1[rr,cc] = 1
+    XY1.append([x,y])
+
+for i in range(len(COORDINATES2)):
+    x = int(COORDINATES2[i][0]) + 4
+    y = int(COORDINATES2[i][1]) + 4
+
+    rr, cc = circle(x, y, 2)
+
+    count = 0
+    for i in range(len(rr)):
+        if (rr[i-count] >= 1024 or rr[i-count] < 0):
+            rr = np.delete(rr, i-count)
+            cc = np.delete(cc, i-count)
+            count += 1
+
+    IMAGE2[rr,cc] = 1
+    XY2.append([x,y])
+
+for i in range(len(COORDINATES3)):
+    x = int(COORDINATES3[i][0]) + 4
+    y = int(COORDINATES3[i][1]) + 4
+
+    rr, cc = circle(x, y, 2)
+    r = []
+    c = []
+    count = 0
+    for i in range(len(rr)):
+        if (rr[i-count] >= 1024 or rr[i-count] < 0):
+            rr = np.delete(rr, i-count)
+            cc = np.delete(cc, i-count)
+            count += 1
+    
+    IMAGE3[rr,cc] = 1
+    XY3.append([x,y])
+
+# props = regionprops(IMAGE1)
+# print(props[0].centroid)
+# print('test')
+
+# plt.imshow(IMAGE1, cmap="gray")
+# plt.show()
+
+# plt.imshow(IMAGE2, cmap="gray")
+# plt.show()
+
+# plt.imshow(IMAGE3, cmap="gray")
+# plt.show()
+
+
+COLOCALIZED1 = np.bitwise_and(IMAGE1, IMAGE2)
+COLOCALIZED2 = np.bitwise_and(IMAGE1, IMAGE3)
+COLOCALIZED3 = np.bitwise_and(IMAGE2, IMAGE3)
+
+COLOCALIZED = np.bitwise_or(COLOCALIZED1, COLOCALIZED2)
+COLOCALIZED = np.bitwise_or(COLOCALIZED, COLOCALIZED3)
+
+plt.imshow(COLOCALIZED, cmap='gray')
 plt.show()
