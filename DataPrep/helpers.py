@@ -87,7 +87,7 @@ def dot_click_annoation_file_to_pixelmap(anno_file,
 
 ##############################################################################
 
-def symquant_json_to_pixelmap_stub(anno_format,
+def symquant_to_pixelmap_stub(anno_format,
                                                 width,
                                                 height,
                                                 dot_radius):
@@ -98,9 +98,28 @@ def symquant_json_to_pixelmap_stub(anno_format,
     https://www.biorxiv.org/content/10.1101/538769v1
     and convert it to a pixelmap 
 
-    
+        
     """
 
     
     pass
+
+##############################################################################
+
+def colocaliztion_stub():
+    """
+    """
+    # TODO imliment 
+
+    pass
+
+
+
+
+
+
+
+
+
+
 

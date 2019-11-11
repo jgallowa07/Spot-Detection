@@ -40,3 +40,22 @@ class TestHelpers(tests.testDataPrep):
         anno_line_count = len(open(anno_file).readlines(  )) 
         self.assertTrue(np.sum(pixelmap) >= anno_line_count)
     
+        # TODO more functions.
+
+    
+    def test_symquant_to_pixelmap(self):
+        """
+        Tests for symquant -> pixelmap
+        """
+        pass
+
+    def test_colocalization(self):
+        """
+        tests for colocalization.
+        """
+        pass
+
+
+
+
+

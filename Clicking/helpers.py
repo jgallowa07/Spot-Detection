@@ -25,8 +25,7 @@ from skimage.draw import circle
 import cv2
 
 
-
-
+# TODO Argparse
 
 
 
@@ -44,20 +43,31 @@ import cv2
 
 
 def annotate(event, x, y, flags, params):
+    """
+
+    """
     if event == cv2.EVENT_LBUTTONDBLCLK:
         cv2.circle(img,(x,y),1,(0,0,255),-1)
         cv2.rectangle(img,top_coord,bot_coord,(255,0,0),0)
         top_coord = (int(x-box_adj),int(y-box_adj)) 
         bot_coord = (int(x+box_adj),int(y+box_adj))      
         
+        
 
 ##############################################################################
 
 def annotate_by_clicking(filepath, boxsize=16, output=None)
+    """
+    """
 
+    if(output == None):
+        base=os.path.basename(filepath)
+        output = filepath
     
+
     img = cv2.imread(current_image)
     cv2.namedWindow('img')
+    
     cv2.setMouseCallback('img',draw_circle, [output])
 
     while True:
@@ -67,6 +77,7 @@ def annotate_by_clicking(filepath, boxsize=16, output=None)
     
     cv2.destroyAllWindows()
     CURRENT_FP.close()
+
 
 
 
