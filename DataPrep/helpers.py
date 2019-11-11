@@ -104,37 +104,3 @@ def symquant_json_to_pixelmap_stub(anno_format,
     
     pass
 
-##############################################################################
-
-def annotate(event,x,y,output):
-    if event == cv2.EVENT_LBUTTONDBLCLK:
-        cv2.circle(img,(x,y),1,(0,0,255),-1)
-        
-        
-        
-
-##############################################################################
-
-def annotate_by_clicking(filepath, boxsize=16, output=None)
-
-
-    img = cv2.imread(current_image)
-    cv2.namedWindow('img')
-    cv2.setMouseCallback('img',draw_circle)
-
-    while True:
-        cv2.imshow('img',img)
-        if cv2.waitKey(20) & 0xFF == 27:
-            break
-    
-    cv2.destroyAllWindows()
-    CURRENT_FP.close()
-
-
-
-
-
-
-
-
-

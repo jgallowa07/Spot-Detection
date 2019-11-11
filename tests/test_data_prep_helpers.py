@@ -8,7 +8,8 @@ import sys
 import numpy as np
 
 #from helpers import *
-from scripts.helpers import *
+import tests
+from DataPrep.helpers import *
 import numpy as np
 
 np.random.seed(23)
@@ -23,8 +24,9 @@ class TestHelpers(tests.testDataPrep):
         Let's test that the correct dimentions are created for each new layer
         """
         # note, filepaths are relative to where you run nose.
+        # TODO prep example in super class, see tsenc
         width, height = 1024, 1024
-        anno_file = "./Annotation/annotation_output/L1-D01-g_output.csv"
+        anno_file = "./Data/Annotation/annotation_output/L1-D01-g_output.csv"
 
         # make sure the images are the same size        
         pixelmap = dot_click_annoation_file_to_pixelmap(
