@@ -52,7 +52,7 @@ def dot_click_annoation_file_to_pixelmap(anno_file,
     """
 
     # initialize a pixelmap
-    pixelmap = np.zeros([width,height])
+    pixelmap = np.zeros([width,height], dtype=np.uint8)
 
     # draw ones using skimage circle()
     # https://scikit-image.org/docs/dev/api/skimage.draw.html
@@ -76,6 +76,10 @@ def dot_click_annoation_file_to_pixelmap(anno_file,
         count = 0
         for i in range(len(rr)):
             if (rr[i-count] >= 1024 or rr[i-count] < 0):
+                rr = np.delete(rr, i-count)
+                cc = np.delete(cc, i-count)
+                count += 1
+            if (cc[i-count] >= 1024 or cc[i-count] < 0):
                 rr = np.delete(rr, i-count)
                 cc = np.delete(cc, i-count)
                 count += 1
@@ -106,12 +110,58 @@ def symquant_to_pixelmap_stub(anno_format,
 
 ##############################################################################
 
-def colocaliztion_stub():
+def colocaliztion(pixelmap_list):
     """
-    """
-    # TODO imliment 
+    This function takes in a list of pixelmaps and performs bitwise operations 
+    to find the spots that have pixels in common (colocalization)
 
-    pass
+
+    This function is dependent on the length of the pixelmap_list. If the length is
+    just two then it will compute the bitwise-AND, and find the spots of colocalization
+    for those two images. If the length is three then it will find all three sets of 
+    image colocalization and bitwise-OR those together.
+
+
+    This function will return a 2-dimentional binary numpy ndarray object 
+    with the shape (1024,1024). 1's represent any point of colocalization between the
+    images.
+    """
+    pixelmap_list = np.array(pixelmap_list)
+
+    SHAPE = pixelmap_list[0].shape
+    COLOCALIZED = np.zeros((SHAPE[0],SHAPE[1]), dtype=np.uint8)
+
+    # if(len(pixelmap_list) == 1):   # The user did not provide enough information to calculate the colocalization
+    #     return "Please provide a list of at least two pixelmaps."
+    assert(len(pixelmap_list) >= 2)
+    
+    
+    # Case where two pixelmaps are provided
+    if(len(pixelmap_list) == 2):
+        if(pixelmap_list[0].shape != pixelmap_list[1].shape):
+            return "Please provide pixelmaps with the same dimensions"
+        
+        # performs a bitwise-AND to keep only the pixels that share a spot of colocalizaiton
+        COLOCALIZED = np.bitwise_and(pixelmap_list[0], pixelmap_list[1])
+    
+
+    # Case where three pixelmaps are provided
+    if(len(pixelmap_list) == 3):
+        if(pixelmap_list[0].shape != pixelmap_list[1].shape or pixelmap_list[0].shape != pixelmap_list[2].shape):
+            return "Please provide pixelmaps with the same dimensions"
+
+        # performs three bitwise-ANDs to keep only the pixels that share a spot of colocalizaiton
+        coloalized1 = np.bitwise_and(pixelmap_list[0], pixelmap_list[1])
+        coloalized2 = np.bitwise_and(pixelmap_list[0], pixelmap_list[2])
+        coloalized3 = np.bitwise_and(pixelmap_list[1], pixelmap_list[2])
+
+        # performs two bitwise-ORs to combine all three sets of colocalization
+        COLOCALIZED = np.bitwise_or(coloalized1, coloalized2)
+        COLOCALIZED = np.bitwise_or(COLOCALIZED, coloalized3)
+
+    
+    return COLOCALIZED
+
 
 
 

@@ -49,11 +49,95 @@ class TestHelpers(tests.testDataPrep):
         """
         pass
 
-    def test_colocalization(self):
+    
+    # def test_no_colocalization(self):
+    #     """
+    #     tests for no colocalization.
+    #     """
+
+    #     # note, filepaths are relative to where you run nose.
+    #     width1, height1 = 1024, 1024
+    #     anno_file1 = "./Data/Annotation/annotation_output/L1-D01-g_output.csv"
+
+    #     # Create three separate pixelmaps to use for colocalization testing       
+    #     pixelmap1 = dot_click_annoation_file_to_pixelmap(
+    #         anno_file = anno_file1,
+    #         width = width1,
+    #         height = height1,
+    #         dot_radius = 2)
+
+    #     # test colocalization with only one pixelmap
+    #     output = colocaliztion([pixelmap1])
+    #     self.a
+    #     self.assertEqual(output,"Please provide a list of at least two pixelmaps.")
+
+
+    
+    def test_two_colocalization(self):
         """
-        tests for colocalization.
+        tests for two-pixelmap colocalization.
         """
-        pass
+
+        # note, filepaths are relative to where you run nose.
+        width, height = 1024, 1024
+        anno_file1 = "./Data/Annotation/annotation_output/L1-D01-g_output.csv"
+        anno_file2 = "./Data/Annotation/annotation_output/L1-D01-s_output.csv"
+
+        # Create three separate pixelmaps to use for colocalization testing       
+        pixelmap1 = dot_click_annoation_file_to_pixelmap(
+            anno_file = anno_file1,
+            width = width,
+            height = height,
+            dot_radius = 2)
+        pixelmap2 = dot_click_annoation_file_to_pixelmap(
+            anno_file = anno_file2,
+            width = width,
+            height = height,
+            dot_radius = 2)
+
+
+        # test colocalization with only two pixelmaps
+        output = colocaliztion([pixelmap1,pixelmap2])
+        self.assertEqual(output.shape,(width,height))
+
+        # test colocalization with smaller arrays for sanity check
+        array1 = np.array(([1,0,0],[0,1,0],[0,0,1]))
+        array2 = np.array(([0,0,1],[0,1,0],[1,0,0]))
+        output = colocaliztion([array1, array2])
+        self.assertTrue(np.array_equal(output, np.array(([0,0,0],[0,1,0],[0,0,0]))))
+
+
+    def test_three_colocalization(self):
+        """
+        tests for three-pixelmap colocalization.
+        """
+
+        # note, filepaths are relative to where you run nose.
+        width, height = 1024, 1024
+        anno_file1 = "./Data/Annotation/annotation_output/L1-D01-g_output.csv"
+        anno_file2 = "./Data/Annotation/annotation_output/L1-D01-s_output.csv"
+        anno_file3 = "./Data/Annotation/annotation_output/L1-D01-z_output.csv"
+
+        # Create three separate pixelmaps to use for colocalization testing       
+        pixelmap1 = dot_click_annoation_file_to_pixelmap(
+            anno_file = anno_file1,
+            width = width,
+            height = height,
+            dot_radius = 2)
+        pixelmap2 = dot_click_annoation_file_to_pixelmap(
+            anno_file = anno_file2,
+            width = width,
+            height = height,
+            dot_radius = 2)
+        pixelmap3 = dot_click_annoation_file_to_pixelmap(
+            anno_file = anno_file3,
+            width = width,
+            height = height,
+            dot_radius = 2)
+
+        # test colocalization with three pixelmaps
+        output = colocaliztion([pixelmap1,pixelmap2,pixelmap3])
+        self.assertEqual(output.shape,(width,height))
 
 
 
