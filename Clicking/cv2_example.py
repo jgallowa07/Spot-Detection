@@ -1,7 +1,12 @@
 import cv2
 import numpy as np
 from math import sqrt
+from helper import *
 
+
+
+
+"""
 def calc_distance(p1, p2):
     (x1, y1) = p1
     (x2, y2) = p2
@@ -41,3 +46,7 @@ while True:
     if cv2.waitKey(1) & 0xFF == ord("q"):
         break
 cv2.destroyAllWindows()
+"""
+
+
+

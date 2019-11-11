@@ -58,11 +58,17 @@ def annotate(event, x, y, flags, params):
 
 def annotate_by_clicking(filepath, boxsize=16, output=None)
     """
+
     """
 
+    # By default, we will write a csv with the 
+    # same filepath as image itself. 
     if(output == None):
         base=os.path.basename(filepath)
-        output = filepath
+        output = os.path.splitext(base)[0] + ".csv"
+    
+    print(output)
+    sys.exit()
     
 
     img = cv2.imread(current_image)
