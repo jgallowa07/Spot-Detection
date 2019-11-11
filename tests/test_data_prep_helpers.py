@@ -8,12 +8,12 @@ import sys
 import numpy as np
 
 #from helpers import *
-import tests.helpers
+from scripts.helpers import *
 import numpy as np
 
 np.random.seed(23)
 
-class TestHelpers(tests.testNDScripts):
+class TestHelpers(tests.testDataPrep):
     """
     Tests for the TsEncoder class.
     """
@@ -27,7 +27,7 @@ class TestHelpers(tests.testNDScripts):
         anno_file = "./Annotation/annotation_output/L1-D01-g_output.csv"
 
         # make sure the images are the same size        
-        pixelmap = tests.helpers.dot_click_annoation_file_to_pixelmap(
+        pixelmap = dot_click_annoation_file_to_pixelmap(
             anno_file = anno_file,
             width = width,
             height = height,

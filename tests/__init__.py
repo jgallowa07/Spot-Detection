@@ -15,5 +15,5 @@ def tearDown():
     pass
 
 
-class testNDScripts(unittest.TestCase):
+class testDataPrep(unittest.TestCase):
     pass
