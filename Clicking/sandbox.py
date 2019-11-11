@@ -1,8 +1,13 @@
 import cv2
 import numpy as np
 from math import sqrt
-from helper import *
+from helpers import *
 
+
+
+annotate_by_clicking(filepath = "../Data/Empirical/L1-D01-g.bmp", 
+                    boxsize=16, 
+                    output=None)
 
 
 

@@ -49,32 +49,33 @@ def annotate(event, x, y, flags, params):
     if event == cv2.EVENT_LBUTTONDBLCLK:
         cv2.circle(img,(x,y),1,(0,0,255),-1)
         cv2.rectangle(img,top_coord,bot_coord,(255,0,0),0)
-        top_coord = (int(x-box_adj),int(y-box_adj)) 
-        bot_coord = (int(x+box_adj),int(y+box_adj))      
+        top_coord = (int(x-box_adj),int(y-box_adj))
+        bot_coord = (int(x+box_adj),int(y+box_adj))
         
         
 
 ##############################################################################
 
-def annotate_by_clicking(filepath, boxsize=16, output=None)
+def annotate_by_clicking(filepath, boxsize=16, output=None):
     """
-
+    
     """
 
     # By default, we will write a csv with the 
-    # same filepath as image itself. 
+    # same filemae as image, but with csv exgtention and in the cwd. 
     if(output == None):
         base=os.path.basename(filepath)
         output = os.path.splitext(base)[0] + ".csv"
     
-    print(output)
-    sys.exit()
+    
+    #print(output)
+    #sys.exit()
     
 
     img = cv2.imread(current_image)
     cv2.namedWindow('img')
     
-    cv2.setMouseCallback('img',draw_circle, [output])
+    cv2.setMouseCallback('img',draw_circle, [open(output,"a")])
 
     while True:
         cv2.imshow('img',img)
