@@ -52,7 +52,7 @@ def dot_click_annoation_file_to_pixelmap(anno_file,
     """
 
     # initialize a pixelmap
-    pixelmap = np.zeros([width,height])
+    pixelmap = np.zeros([width,height], dtype=np.uint8)
 
     # draw ones using skimage circle()
     # https://scikit-image.org/docs/dev/api/skimage.draw.html
@@ -126,12 +126,14 @@ def colocaliztion(pixelmap_list):
     with the shape (1024,1024). 1's represent any point of colocalization between the
     images.
     """
+    pixelmap_list = np.array(pixelmap_list)
 
     SHAPE = pixelmap_list[0].shape
     COLOCALIZED = np.zeros((SHAPE[0],SHAPE[1]), dtype=np.uint8)
 
-    if(len(pixelmap_list) == 1):   # The user did not provide enough information to calculate the colocalization
-        return "Please provide a list of at least two pixelmaps."
+    # if(len(pixelmap_list) == 1):   # The user did not provide enough information to calculate the colocalization
+    #     return "Please provide a list of at least two pixelmaps."
+    assert(len(pixelmap_list) >= 2)
     
     
     # Case where two pixelmaps are provided
@@ -154,8 +156,8 @@ def colocaliztion(pixelmap_list):
         coloalized3 = np.bitwise_and(pixelmap_list[1], pixelmap_list[2])
 
         # performs two bitwise-ORs to combine all three sets of colocalization
-        COLOCALIZED = np.bitwise_or(COLOCALIZED1, COLOCALIZED2)
-        COLOCALIZED = np.bitwise_or(COLOCALIZED, COLOCALIZED3)
+        COLOCALIZED = np.bitwise_or(coloalized1, coloalized2)
+        COLOCALIZED = np.bitwise_or(COLOCALIZED, coloalized3)
 
     
     return COLOCALIZED
