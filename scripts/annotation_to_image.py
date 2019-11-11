@@ -21,6 +21,11 @@ S_FILE = args.sfile          # assigning s annotation file name as string to glo
 Z_FILE = args.zfile          # assigning z annotation file name as string to global varible
 RADIUS = args.radius
 
+
+
+
+
+
 IMAGE1 = np.zeros((1024,1024), dtype=np.uint8)
 IMAGE2 = np.zeros((1024,1024), dtype=np.uint8)
 IMAGE3 = np.zeros((1024,1024), dtype=np.uint8)
