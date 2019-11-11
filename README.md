@@ -71,7 +71,7 @@ The directory for this structure is as follows:
     └── test_data_prep_helpers.py
 ```
 
-**Clicking**
+## Clicking
 
 First, we have created a script which
 will accurately annotate images by simply clicking on region of inters. Using
@@ -81,7 +81,7 @@ are used both to quantify existing methods, as well as train and test our own.
 
 TODO: Give example.
 
-**DataPrep**
+## DataPrep
 
 Next we have Data prep scripts which contain functions that convert annotations
 from various sources such as PASCAL-VOL, JSON, and symquant output into
@@ -92,24 +92,24 @@ compute co-localization and
 
 TODO: Give example 
 
-**DeepLearning**
+## DeepLearning
 
 TODO
 
-**tests**
+## tests
 
 This repository contains all nosetests which will be used to test ALL 
 functions implimented in this repository. To run the unit tests simply 
 type `python3 -m nose tests`
 
-**Data**
+## Data
 
 The data repository is split into 4 sub-directories. 
 
-* Empirical - Contains raw confocal images in `.bmp` format
-* Annotation - Contains raw annotation files from all methods such as clicking,
+* **Empirical** - Contains raw confocal images in `.bmp` format
+* **Annotation** - Contains raw annotation files from all methods such as clicking,
 synquant, and nueral network output.
-* Prepped Empirical - This is for empirical images which may have been manipulated 
+* **Prepped Empirical** - This is for empirical images which may have been manipulated 
 for neural network training input mostly.
-* Prepped Annotation - This is for pixelmaps to be used as targets for network
+* **Prepped Annotation** - This is for pixelmaps to be used as targets for network
 training
