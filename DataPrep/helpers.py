@@ -164,6 +164,22 @@ def colocaliztion(pixelmap_list):
 
 
 
+def colocaliztion():
+    """
+    TODO: Impliment and remove stub
+
+    This function
+    """
+
+
+def empirical_prep():
+    """
+    TODO: Impliment and remove stub
+
+    This function
+    """
+
+
 
 
 
