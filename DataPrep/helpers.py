@@ -164,20 +164,66 @@ def colocaliztion(pixelmap_list):
 
 
 
-def colocaliztion():
+def sub_patch_pixelmap(image_pixelmap, size=32, height=(256,1024), width=(256,768)):
     """
-    TODO: Impliment and remove stub
+    This function allows the user to break up the given pixelmap into sub-patches. The 
+    user can specify the area they would like to sub-patch as well as the size of
+    the patch they would like to grab.
 
-    This function
+    image_pixelmap: numpy 2d array corresponding to the pixelmap to be sub-patched
+    size: the SIZExSIZE chunk to be grabbed
+    height: tuple specifying the y start and stop positions (start, stop)  
+            DEFAULT: (256,1024)
+    width: tuple specifying the x start and stop positions (start, stop)  
+            DEFAULT: (256,768)
+    
+    This function will return a numpy ndarray of SIZExSIZE 2-dimentional binary numpy ndarrays
     """
 
+    SUB_IMAGES = []    # initialize an array for holding the sub images
 
-def empirical_prep():
-    """
-    TODO: Impliment and remove stub
+    for i in range(height[0],height[1],size):  # this for loop isolates only the region of the image specified in the parameters
+        for j in range(width[0],width[1],size):
+            temp_array = image_pixelmap[i:i+size,j:j+size] # grabbing SIZExSIZE chunks and storing them in an array
+            SUB_IMAGES.append(temp_array)
+    
+    SUB_IMAGES = np.array(SUB_IMAGES)
 
-    This function
+    return SUB_IMAGES
+
+
+
+def empirical_prep(list_of_paths, size=32, height=(256,1024), width=(256,768)):
     """
+    This function allows the user to break up the empirical images into sub images for 
+    training or testing. The user can give as many paths to images as they would like in
+    the list_of_paths parameter. The user can specify the area they would like to sub-image 
+    as well as the size of the chunk they would like to grab.
+
+    list_of_paths: list of strings corresponding to the paths of the images wanting to be
+                sub-imaged
+    size: the SIZExSIZE chunk to be grabbed
+    height: tuple specifying the y start and stop positions (start, stop)  
+            DEFAULT: (256,1024)
+    width: tuple specifying the x start and stop positions (start, stop)  
+            DEFAULT: (256,768)
+
+    This function will return a list of numpy ndarrays, of which contain all of the sub-images
+    for that given empirical image. There will be one item in the list for each empirical 
+    image given
+    """
+
+    SUB_EMPIRICAL = []
+    for num in range(len(list_of_paths)):
+        pillow_opened_image = Image.open(list_of_paths[num])
+        temp_sub_images = []
+        for i in range(height[0],height[1],size):  # this for loop isolates only the region of the image specified in the parameters
+            for j in range(width[0],width[1],size):
+                temp_pic = pillow_opened_image.crop((i,j,i+size,j+size)) # grabbing SIZExSIZE chunks and storing them in an array
+                temp_sub_images.append(temp_pic)
+        SUB_EMPIRICAL.append(temp_sub_images)
+
+    return SUB_EMPIRICAL
 
 
 
