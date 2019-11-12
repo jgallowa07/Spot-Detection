@@ -83,7 +83,7 @@ class TestHelpers(tests.testDataPrep):
         anno_file1 = "./Data/Annotation/annotation_output/L1-D01-g_output.csv"
         anno_file2 = "./Data/Annotation/annotation_output/L1-D01-s_output.csv"
 
-        # Create three separate pixelmaps to use for colocalization testing       
+        # Create two separate pixelmaps to use for colocalization testing       
         pixelmap1 = dot_click_annoation_file_to_pixelmap(
             anno_file = anno_file1,
             width = width,
@@ -138,6 +138,60 @@ class TestHelpers(tests.testDataPrep):
         # test colocalization with three pixelmaps
         output = colocaliztion([pixelmap1,pixelmap2,pixelmap3])
         self.assertEqual(output.shape,(width,height))
+
+
+
+    def test_empirical_subpatch(self):
+        """
+        tests for sub-patching empirical images
+        """
+
+        empiricalg = "./Data/Empirical/L1-D01-g.bmp"
+        empiricals = "./Data/Empirical/L1-D01-s.bmp"
+        empiricalz = "./Data/Empirical/L1-D01-z.bmp"
+        
+        output = empirical_prep([empiricalg])
+        self.assertEqual(len(output), 1)
+        self.assertEqual(len(output[0]), 384)
+
+        output = empirical_prep([empiricalg, empiricals])
+        self.assertEqual(len(output), 2)
+        self.assertEqual(len(output[0]), 384)
+
+        output = empirical_prep([empiricalg, empiricals, empiricalz])
+        self.assertEqual(len(output), 3)
+        self.assertEqual(len(output[2]), 384)
+
+        output = empirical_prep([empiricalg, empiricals], size=64)
+        self.assertEqual(len(output), 2)
+        self.assertEqual(len(output[1]), 96)
+
+
+
+    def test_pixelmap_subpatch(self):
+        """
+        tests for sub-patching empirical images
+        """
+
+        # note, filepaths are relative to where you run nose.
+        width1, height1 = 1024, 1024
+        anno_file1 = "./Data/Annotation/annotation_output/L1-D01-g_output.csv"
+
+        # Create one pixelmap for sub-patch testing       
+        pixelmap1 = dot_click_annoation_file_to_pixelmap(
+            anno_file = anno_file1,
+            width = width1,
+            height = height1,
+            dot_radius = 2)
+
+        sub_annotations = sub_patch_pixelmap(pixelmap1)
+        self.assertEqual(sub_annotations.shape,(384,32,32))
+
+        sub_annotations = sub_patch_pixelmap(pixelmap1, size=64)
+        self.assertEqual(sub_annotations.shape,(96,64,64))
+
+
+
 
 
 
