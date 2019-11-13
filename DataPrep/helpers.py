@@ -162,7 +162,7 @@ def colocaliztion(pixelmap_list):
     
     return COLOCALIZED
 
-
+##############################################################################
 
 def sub_patch_pixelmap(image_pixelmap, size=32, height=(256,1024), width=(256,768)):
     """
@@ -191,7 +191,7 @@ def sub_patch_pixelmap(image_pixelmap, size=32, height=(256,1024), width=(256,76
 
     return SUB_IMAGES
 
-
+##############################################################################
 
 def empirical_prep(list_of_paths, size=32, height=(256,1024), width=(256,768)):
     """
@@ -225,8 +225,18 @@ def empirical_prep(list_of_paths, size=32, height=(256,1024), width=(256,768)):
 
     return SUB_EMPIRICAL
 
+##############################################################################
 
+# TODO impliment and remove stub :)
+def f1_stub(pixelmap1, pixelmap2):
+    """
+    this function will take two pixelmaps (2d-ndarray)
+    and return the f1 score defined as:
+    
+    f1 = 2 / ((1 / precision) + (1/ recall)).
+    """
 
+    pass
 
 
 
