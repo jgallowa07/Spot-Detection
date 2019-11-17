@@ -19,6 +19,8 @@ from PIL import Image
 from skimage.draw import circle
 import cv2
 
+from read_roi import read_roi_zip
+
 ##############################################################################
 
 # UNDER CONSTRUCTION
@@ -91,10 +93,7 @@ def dot_click_annoation_file_to_pixelmap(anno_file,
 
 ##############################################################################
 
-def symquant_to_pixelmap_stub(anno_format,
-                                                width,
-                                                height,
-                                                dot_radius):
+def synquant_to_pixelmap_stub(filename):
     """
     TODO: Impliment and remove stub :)
     
@@ -106,7 +105,19 @@ def symquant_to_pixelmap_stub(anno_format,
     """
 
     
-    pass
+    roi = read_roi_zip(filename)
+    xcoord=[]
+    ycoord=[]
+    for i in roi.keys():
+        xcoord=np.append(xcoord,(roi[i]['x']))
+        ycoord=np.append(ycoord,roi[i]['y'])
+    xcoord=xcoord.astype(int)
+    ycoord=ycoord.astype(int)
+    map = np.zeros((1024,1024),dtype=int)
+    for i in range(len(xcoord)):
+        map[xcoord[i],ycoord[i]]+=1
+
+    return map
 
 ##############################################################################
 
