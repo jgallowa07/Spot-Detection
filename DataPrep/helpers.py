@@ -239,7 +239,7 @@ def empirical_prep(list_of_paths, size=32, height=(256,1024), width=(256,768)):
 ##############################################################################
 
 # TODO impliment and remove stub :)
-def f1_stub(pixelmap1, pixelmap2):
+def f1_score(pixelmap1, pixelmap2):
     """
     this function will take two pixelmaps (2d-ndarray)
     and return the f1 score defined as:
@@ -247,7 +247,16 @@ def f1_stub(pixelmap1, pixelmap2):
     f1 = 2 / ((1 / precision) + (1/ recall)).
     """
 
-    pass
+    true_positive = np.sum(np.bitwise_and(pixelmap1, pixelmap2))
+    false_positive = np.sum(np.bitwise_and(pixelmap1, ~pixelmap2))
+    false_negative = np.sum(np.bitwise_and(~pixelmap1, pixelmap2))
+
+    print(true_positive, false_positive, false_negative)
+
+    precision = true_positive / (true_positive + false_positive)
+    recall = true_positive / (true_positive + false_negative)
+
+    return 2/((1/precision) + (1/recall))
 
 
 
