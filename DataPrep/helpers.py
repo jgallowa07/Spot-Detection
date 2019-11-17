@@ -114,9 +114,8 @@ def synquant_to_pixelmap_stub(filename):
     xcoord=xcoord.astype(int)
     ycoord=ycoord.astype(int)
     map = np.zeros((1024,1024),dtype=int)
-    for i in xcoord:
-        for j in ycoord:
-            map[i,j]+=1
+    for i in range(len(xcoord)):
+        map[xcoord[i],ycoord[i]]+=1
 
     return map
 
