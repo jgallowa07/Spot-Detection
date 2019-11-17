@@ -193,6 +193,18 @@ class TestHelpers(tests.testDataPrep):
 
 
 
+    def test_synquant_colocalization(self):
+        anno_file1='./Data/Annotation/synquant_output/z=4/RoiSet_g.zip'
+        anno_file2='./Data/Annotation/synquant_output/z=4/RoiSet_s.zip'
+        anno_file3='./Data/Annotation/synquant_output/z=4/RoiSet_z.zip'
+        pixelmap1=synquant_to_pixelmap_stub(anno_file1)
+        pixelmap2=synquant_to_pixelmap_stub(anno_file2)
+        pixelmap3=synquant_to_pixelmap_stub(anno_file3)
+        output = colocaliztion([pixelmap1,pixelmap2,pixelmap3])
+
+        img = plt.imshow(output)
+        plt.show(img)
+        self.assertEqual(output.shape,(1024,1024))
 
 
 
