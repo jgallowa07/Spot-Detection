@@ -20,6 +20,7 @@ to install with your favorite package manager.
 * cv2
 * Tensorflow/Keras
 * nose
+* read-roi
 
 FINISH.
 
