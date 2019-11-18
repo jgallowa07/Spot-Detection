@@ -121,7 +121,7 @@ def synquant_to_pixelmap_stub(filename):
 
 ##############################################################################
 
-def colocaliztion(pixelmap_list):
+def colocalization(pixelmap_list):
     """
     This function takes in a list of pixelmaps and performs bitwise operations 
     to find the spots that have pixels in common (colocalization)
