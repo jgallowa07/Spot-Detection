@@ -261,8 +261,6 @@ def f1_score(pixelmap1, pixelmap2):
     false_positive = np.sum(np.bitwise_and(pixelmap1, ~pixelmap2))
     false_negative = np.sum(np.bitwise_and(~pixelmap1, pixelmap2))
 
-    print(true_positive, false_positive, false_negative)
-
     precision = true_positive / (true_positive + false_positive)
     recall = true_positive / (true_positive + false_negative)
 
