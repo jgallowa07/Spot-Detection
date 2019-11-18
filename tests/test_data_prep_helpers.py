@@ -254,6 +254,7 @@ class TestHelpers(tests.testDataPrep):
         self.assertTrue(f1_output <= 1)
 
 
+        # simple f1 test to double check
         array1 = np.array(([1,0,0],[0,1,0],[0,0,1]))
         array2 = np.array(([0,0,1],[0,1,0],[1,0,0]))
         F1_test = f1_score(array1, array2)
