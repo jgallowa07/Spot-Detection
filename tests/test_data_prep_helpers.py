@@ -209,7 +209,7 @@ class TestHelpers(tests.testDataPrep):
 
     def test_f1_score(self):
         """
-
+            tests for calculating f1 score
         """
 
         syn_file1='./Data/Annotation/synquant_output/z=4/RoiSet_g.zip'
@@ -253,6 +253,11 @@ class TestHelpers(tests.testDataPrep):
         self.assertTrue(f1_output >= 0)
         self.assertTrue(f1_output <= 1)
 
+
+        array1 = np.array(([1,0,0],[0,1,0],[0,0,1]))
+        array2 = np.array(([0,0,1],[0,1,0],[1,0,0]))
+        F1_test = f1_score(array1, array2)
+        self.assertEqual(F1_test, (1/3))
 
 
 
