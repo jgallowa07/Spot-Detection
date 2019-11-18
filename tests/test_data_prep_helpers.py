@@ -200,12 +200,65 @@ class TestHelpers(tests.testDataPrep):
         pixelmap1=synquant_to_pixelmap_stub(anno_file1)
         pixelmap2=synquant_to_pixelmap_stub(anno_file2)
         pixelmap3=synquant_to_pixelmap_stub(anno_file3)
-        output = colocaliztion([pixelmap1,pixelmap2,pixelmap3])
+        synquant_colocalization_map = colocaliztion([pixelmap1,pixelmap2,pixelmap3])
 
-        img = plt.imshow(output)
-        plt.show(img)
-        self.assertEqual(output.shape,(1024,1024))
+        # img = plt.imshow(synquant_colocalization_map)
+        # plt.show(img)
+        self.assertEqual(synquant_colocalization_map.shape,(1024,1024))
 
+
+    def test_f1_score(self):
+        """
+            tests for calculating f1 score
+        """
+
+        syn_file1='./Data/Annotation/synquant_output/z=4/RoiSet_g.zip'
+        syn_file2='./Data/Annotation/synquant_output/z=4/RoiSet_s.zip'
+        syn_file3='./Data/Annotation/synquant_output/z=4/RoiSet_z.zip'
+        pixelmap11=synquant_to_pixelmap_stub(syn_file1)
+        pixelmap22=synquant_to_pixelmap_stub(syn_file2)
+        pixelmap33=synquant_to_pixelmap_stub(syn_file3)
+        synquant_colocalization_map = colocaliztion([pixelmap11,pixelmap22,pixelmap33])
+
+        width, height = 1024, 1024
+        anno_file1 = "./Data/Annotation/annotation_output/L1-D01-g_output.csv"
+        anno_file2 = "./Data/Annotation/annotation_output/L1-D01-s_output.csv"
+        anno_file3 = "./Data/Annotation/annotation_output/L1-D01-z_output.csv"
+
+        # Create three separate pixelmaps to use for colocalization testing       
+        pixelmap1 = dot_click_annoation_file_to_pixelmap(
+            anno_file = anno_file1,
+            width = width,
+            height = height,
+            dot_radius = 2)
+        pixelmap2 = dot_click_annoation_file_to_pixelmap(
+            anno_file = anno_file2,
+            width = width,
+            height = height,
+            dot_radius = 2)
+        pixelmap3 = dot_click_annoation_file_to_pixelmap(
+            anno_file = anno_file3,
+            width = width,
+            height = height,
+            dot_radius = 2)
+
+        # test colocalization with three pixelmaps
+        phil_output = colocaliztion([pixelmap1,pixelmap2,pixelmap3])
+
+        # print(synquant_colocalization_map.shape)
+        # print(phil_output.shape)
+        # self.assertEqual(synquant_colocalization_map.shape,(1024,1024))
+        # self.assertEqual(phil_output.shape,(1024,1024))
+        f1_output = f1_score(synquant_colocalization_map, phil_output)
+        self.assertTrue(f1_output >= 0)
+        self.assertTrue(f1_output <= 1)
+
+
+        # simple f1 test to double check
+        array1 = np.array(([1,0,0],[0,1,0],[0,0,1]))
+        array2 = np.array(([0,0,1],[0,1,0],[1,0,0]))
+        F1_test = f1_score(array1, array2)
+        self.assertEqual(F1_test, (1/3))
 
 
 
