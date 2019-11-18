@@ -151,20 +151,16 @@ class TestHelpers(tests.testDataPrep):
         empiricalz = "./Data/Empirical/L1-D01-z.bmp"
         
         output = empirical_prep([empiricalg])
-        self.assertEqual(len(output), 1)
-        self.assertEqual(len(output[0]), 384)
+        self.assertEqual(output.shape, (1,384,32,32))
 
         output = empirical_prep([empiricalg, empiricals])
-        self.assertEqual(len(output), 2)
-        self.assertEqual(len(output[0]), 384)
+        self.assertEqual(output.shape, (2,384,32,32))
 
         output = empirical_prep([empiricalg, empiricals, empiricalz])
-        self.assertEqual(len(output), 3)
-        self.assertEqual(len(output[2]), 384)
+        self.assertEqual(output.shape, (3,384,32,32))
 
         output = empirical_prep([empiricalg, empiricals], size=64)
-        self.assertEqual(len(output), 2)
-        self.assertEqual(len(output[1]), 96)
+        self.assertEqual(output.shape, (2,96,64,64))
 
 
 

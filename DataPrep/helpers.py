@@ -231,8 +231,12 @@ def empirical_prep(list_of_paths, size=32, height=(256,1024), width=(256,768)):
         for i in range(height[0],height[1],size):  # this for loop isolates only the region of the image specified in the parameters
             for j in range(width[0],width[1],size):
                 temp_pic = pillow_opened_image.crop((i,j,i+size,j+size)) # grabbing SIZExSIZE chunks and storing them in an array
+                temp_pic = np.array(temp_pic)[:,:,0]
                 temp_sub_images.append(temp_pic)
+        temp_sub_images = np.array(temp_sub_images)
         SUB_EMPIRICAL.append(temp_sub_images)
+    
+    SUB_EMPIRICAL = np.array(SUB_EMPIRICAL)
 
     return SUB_EMPIRICAL
 
