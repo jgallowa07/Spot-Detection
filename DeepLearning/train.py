@@ -16,6 +16,7 @@ sys.path.insert(0,"../")
 
 import numpy as np
 import tensorflow as tf
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 from matplotlib import pyplot as plt
 
 from DataPrep.helpers  import *
@@ -50,14 +51,28 @@ pixelmap3 = dot_click_annoation_file_to_pixelmap(
     height = height,
     dot_radius = 2)
 # colocalization
-colocalized_output = colocaliztion([pixelmap1,pixelmap2,pixelmap3])
+colocalized_output = colocalization([pixelmap1,pixelmap2,pixelmap3])
 # sub_patch annotations
 sub_annotations = sub_patch_pixelmap(colocalized_output)
 
-print(len(empirical_output))
-print(len(empirical_output[0]))
-print("")
-print(sub_annotations.shape)
+
+
+#print(len(empirical_output))
+#fig, ax = plt.subplots(3)
+#for i in range(3):
+#    ax[i].imshow(np.array(empirical_output[0][0])[:,:,i])
+
+#print(np.all(np.equal(np.array(empirical_output[0][0])[:,:,1],np.array(empirical_output[0][0])[:,:,2])))
+
+
+
+
+
+
+
+#print(len(empirical_output[0]))
+#print("")
+#print(sub_annotations.shape)
 
 
 ### This is where I would break up the information into training/testing
