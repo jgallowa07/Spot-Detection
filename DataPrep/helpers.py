@@ -68,8 +68,8 @@ def dot_click_annoation_file_to_pixelmap(anno_file,
         mid_x = (int(anno[1]) + int(anno[3])) // 2
         mid_y = (int(anno[2]) + int(anno[4])) // 2
 
-        assert(0 <= mid_x <= width)
-        assert(0 <= mid_y <= height)
+        assert(0 <= mid_x <= width)  # annotation out of range
+        assert(0 <= mid_y <= height) # annotation out of range
 
         # yay skimage!
         rr,cc = circle(mid_x, mid_y, dot_radius)
@@ -93,9 +93,9 @@ def dot_click_annoation_file_to_pixelmap(anno_file,
 
 ##############################################################################
 
-def synquant_to_pixelmap_stub(filename):
+def synquant_to_pixelmap(filename):
     """
-    TODO: Impliment and remove stub :)
+    TODO: comment
     
     This function should take in the output from SynQuant
     https://www.biorxiv.org/content/10.1101/538769v1
@@ -224,21 +224,29 @@ def empirical_prep(list_of_paths, size=32, height=(256,1024), width=(256,768)):
     image given
     """
 
-    SUB_EMPIRICAL = []
+    sub_empirical = []
     for num in range(len(list_of_paths)):
         pillow_opened_image = Image.open(list_of_paths[num])
         temp_sub_images = []
         for i in range(height[0],height[1],size):  # this for loop isolates only the region of the image specified in the parameters
             for j in range(width[0],width[1],size):
                 temp_pic = pillow_opened_image.crop((i,j,i+size,j+size)) # grabbing SIZExSIZE chunks and storing them in an array
+                # 7
                 temp_pic = np.array(temp_pic)[:,:,0]
                 temp_sub_images.append(temp_pic)
         temp_sub_images = np.array(temp_sub_images)
-        SUB_EMPIRICAL.append(temp_sub_images)
+        sub_empirical.append(temp_sub_images)
     
-    SUB_EMPIRICAL = np.array(SUB_EMPIRICAL)
+    sub_empirical = np.array(sub_empirical)
+    
+    # here, we are re-arranging the axes so 
+    # we have (batch, height, width, channels)
+    sub_empirical = np.swapaxes(sub_empirical,0,1)
+    sub_empirical = np.swapaxes(sub_empirical,1,2)
+    sub_empirical = np.swapaxes(sub_empirical,2,3)
+    
 
-    return SUB_EMPIRICAL
+    return sub_empirical
 
 ##############################################################################
 
@@ -271,7 +279,10 @@ def f1_score(pixelmap1, pixelmap2):
     return 2/((1/precision) + (1/recall))
 
 
+##############################################################################
 
+def split_data():
+    pass
 
 
 

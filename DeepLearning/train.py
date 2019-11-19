@@ -18,6 +18,7 @@ import numpy as np
 import tensorflow as tf
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 from matplotlib import pyplot as plt
+from networks import *
 
 from DataPrep.helpers  import *
 
@@ -54,6 +55,44 @@ pixelmap3 = dot_click_annoation_file_to_pixelmap(
 colocalized_output = colocalization([pixelmap1,pixelmap2,pixelmap3])
 # sub_patch annotations
 sub_annotations = sub_patch_pixelmap(colocalized_output)
+sub_annotations = np.expand_dims(sub_annotations, axis=3)
+
+x = empirical_output
+y = sub_annotations
+
+# should probably shuffle before here
+
+print(x.shape)
+print(y.shape)
+
+test_split = int(x.shape[0] * 0.1) 
+vali_split = int(x.shape[0] * 0.2)
+
+test_x = x[:test_split,:,:,:]
+vali_x = x[test_split:vali_split,:,:,:]
+train_x = x[vali_split:,:,:,:]
+
+test_y = y[:test_split,:,:,:]
+vali_y = y[test_split:vali_split,:,:,:]
+train_y = y[vali_split:,:,:,:]
+
+model = initial_CNN_map(x,y)
+print(model.summary())
+
+model.fit(train_x, train_y, 
+        validation_data = (vali_x, vali_y),
+        epochs = 50)
+
+
+#print(test_split)
+#print(vali_split)
+
+
+
+
+
+
+
 
 
 
@@ -61,19 +100,8 @@ sub_annotations = sub_patch_pixelmap(colocalized_output)
 #fig, ax = plt.subplots(3)
 #for i in range(3):
 #    ax[i].imshow(np.array(empirical_output[0][0])[:,:,i])
-
 #print(np.all(np.equal(np.array(empirical_output[0][0])[:,:,1],np.array(empirical_output[0][0])[:,:,2])))
-
-
-
-
-
-
-
 #print(len(empirical_output[0]))
 #print("")
 #print(sub_annotations.shape)
-
-
 ### This is where I would break up the information into training/testing
-
