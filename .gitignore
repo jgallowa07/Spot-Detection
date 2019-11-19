@@ -1,6 +1,9 @@
 ./Attic
 ./png
 
+# ignore meta-data from vscode
+.vscode
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
