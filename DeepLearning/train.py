@@ -15,6 +15,7 @@ import sys
 sys.path.insert(0,"../")
 
 import numpy as np
+np.set_printoptions(threshold=sys.maxsize)
 import tensorflow as tf
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 from matplotlib import pyplot as plt
@@ -60,7 +61,7 @@ sub_annotations = np.expand_dims(sub_annotations, axis=3)
 x = empirical_output
 y = sub_annotations
 
-# should probably shuffle before here
+# TODO should probably shuffle before here
 
 print(x.shape)
 print(y.shape)
@@ -83,25 +84,4 @@ model.fit(train_x, train_y,
         validation_data = (vali_x, vali_y),
         epochs = 50)
 
-
-#print(test_split)
-#print(vali_split)
-
-
-
-
-
-
-
-
-
-
-#print(len(empirical_output))
-#fig, ax = plt.subplots(3)
-#for i in range(3):
-#    ax[i].imshow(np.array(empirical_output[0][0])[:,:,i])
-#print(np.all(np.equal(np.array(empirical_output[0][0])[:,:,1],np.array(empirical_output[0][0])[:,:,2])))
-#print(len(empirical_output[0]))
-#print("")
-#print(sub_annotations.shape)
-### This is where I would break up the information into training/testing
+# TODO: Try and figure out wtf is going on :)
