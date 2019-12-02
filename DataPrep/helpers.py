@@ -13,6 +13,7 @@ functions for scripts included in synapse detection.
 import os
 import sys
 
+import math
 import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
@@ -250,7 +251,6 @@ def empirical_prep(list_of_paths, size=32, height=(256,1024), width=(256,768)):
 
 ##############################################################################
 
-# TODO impliment and remove stub :)
 def f1_score(pixelmap1, pixelmap2):
     """
     this function will take two pixelmaps (2d-ndarray)
@@ -283,6 +283,69 @@ def f1_score(pixelmap1, pixelmap2):
 
 def split_data():
     pass
+
+
+
+
+##############################################################################
+
+# TODO impliment and remove stub :)
+def simulated_generator_stub(width=10, height=10, num_spots=1, radius=3):
+    """
+    this function will 
+
+
+    width:
+    height:
+    num_spots:
+    radius:
+
+
+    This function will return a simulated example (x) amd a simulated target (y)
+
+    #IDEAS/TODO: variance on radius
+    #slightly offset center
+    """    
+    
+    sim_example = np.zeros([width, height, 3])
+    sim_target = np.zeros([width, height])
+
+    x_vector = np.random.randint(radius, width - radius, num_spots)
+    y_vector = np.random.randint(radius, height - radius, num_spots)
+
+    for x,y in zip(x_vector, y_vector):
+        xx,yy = circle(x,y,radius)
+        sim_target[xx,yy] = 1
+        #activation_list = np.zeros([3,len(xx)])
+        activation_list = np.zeros(len(xx))
+
+        for i in range(len(xx)):
+            diff_x = xx[i] - x
+            diff_y = yy[i] - y
+            diff_from_center = math.sqrt(diff_x**2 + diff_y**2)
+            activation = np.exp(-(diff_from_center**2))
+            activation_list[i] = activation
+            #activation_list[:,i] = activation
+
+        
+            #for j in range(3):
+                #activation_with_noise = activation + np.random.normal(0,0.1)
+                #if(activation_with_noise > 1):
+                #    print("too large")
+                #activation_with_noise = 1
+                #if(activation_with_noise < 1):
+                #    print("too small")
+                #    activation_with_noise = 0
+                #activation_list[j,i] = activation_with_noise
+
+                #activation_list[j,i] = activation
+                
+        #for i in range(3):
+        #    sim_example[xx,yy,i] = activation_list[i]
+
+        sim_example[xx,yy,0] = activation_list
+
+    return sim_example, sim_target
 
 
 
