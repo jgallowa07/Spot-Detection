@@ -151,16 +151,16 @@ class TestHelpers(tests.testDataPrep):
         empiricalz = "./Data/Empirical/L1-D01-z.bmp"
         
         output = empirical_prep([empiricalg])
-        self.assertEqual(output.shape, (1,384,32,32))
+        self.assertEqual(output.shape, (384,32,32,1))
 
         output = empirical_prep([empiricalg, empiricals])
-        self.assertEqual(output.shape, (2,384,32,32))
+        self.assertEqual(output.shape, (384,32,32,2))
 
         output = empirical_prep([empiricalg, empiricals, empiricalz])
-        self.assertEqual(output.shape, (3,384,32,32))
+        self.assertEqual(output.shape, (384,32,32,3))
 
         output = empirical_prep([empiricalg, empiricals], size=64)
-        self.assertEqual(output.shape, (2,96,64,64))
+        self.assertEqual(output.shape, (96,64,64,2))
 
 
 
@@ -193,9 +193,9 @@ class TestHelpers(tests.testDataPrep):
         anno_file1='./Data/Annotation/synquant_output/z=4/RoiSet_g.zip'
         anno_file2='./Data/Annotation/synquant_output/z=4/RoiSet_s.zip'
         anno_file3='./Data/Annotation/synquant_output/z=4/RoiSet_z.zip'
-        pixelmap1=synquant_to_pixelmap_stub(anno_file1)
-        pixelmap2=synquant_to_pixelmap_stub(anno_file2)
-        pixelmap3=synquant_to_pixelmap_stub(anno_file3)
+        pixelmap1=synquant_to_pixelmap(anno_file1)
+        pixelmap2=synquant_to_pixelmap(anno_file2)
+        pixelmap3=synquant_to_pixelmap(anno_file3)
         synquant_colocalization_map = colocalization([pixelmap1,pixelmap2,pixelmap3])
 
         # img = plt.imshow(synquant_colocalization_map)
@@ -211,9 +211,9 @@ class TestHelpers(tests.testDataPrep):
         syn_file1='./Data/Annotation/synquant_output/z=4/RoiSet_g.zip'
         syn_file2='./Data/Annotation/synquant_output/z=4/RoiSet_s.zip'
         syn_file3='./Data/Annotation/synquant_output/z=4/RoiSet_z.zip'
-        pixelmap11=synquant_to_pixelmap_stub(syn_file1)
-        pixelmap22=synquant_to_pixelmap_stub(syn_file2)
-        pixelmap33=synquant_to_pixelmap_stub(syn_file3)
+        pixelmap11=synquant_to_pixelmap(syn_file1)
+        pixelmap22=synquant_to_pixelmap(syn_file2)
+        pixelmap33=synquant_to_pixelmap(syn_file3)
         synquant_colocalization_map = colocalization([pixelmap11,pixelmap22,pixelmap33])
 
         width, height = 1024, 1024
