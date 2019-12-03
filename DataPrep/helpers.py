@@ -553,8 +553,8 @@ def simulate_single_layer(
         # respective activations,
         xx,yy = circle(x,y,radius)
         if is_pixelmap:
-            sum_bump[xx,yy] = xx,yy
-            
+            sim_bump[xx,yy] = xx,yy
+            continue
 
         activation_list = np.zeros(len(xx))
 
