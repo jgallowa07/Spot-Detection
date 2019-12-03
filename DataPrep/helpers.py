@@ -377,18 +377,15 @@ def generate_simulated_microscopy_sample(
         width = 32,
         height = 32,
         radius = 2,
-        coloc_thresh = 3):
+        coloc_thresh = 3,
+        gaussian_bg_mean = 0,
+        gaussian_bg_sd = 0.1):
     
     # TODO max radius size? make a radius vector for each layer of
     # x,y coordinates to introduce some more noise! mo betta.
 
     # TODO Clean up and re-do docs and testing!
 
-    # TODO HOW ARE WE GOING TO HANDLE BACKGROUND - gotta be a clever 
-    # way which includes image morphology ... 
-
-    # TODO Clipping input data to the valid range for 
-    # imshow with RGB data ([0..1] for floats or [0..255] for integers).
 
 
     """
@@ -452,74 +449,12 @@ def generate_simulated_microscopy_sample(
             if len(layers) >= coloc_thresh:
                 layers_list[3] += [(x,y)]
 
-    channels = [simulate_single_layer(layers_list[i], width, height, radius) for i in range(3)]
+    channels = [simulate_single_layer(layers_list[i], width, height, radius, 
+            gaussian_bg_mean = gaussian_bg_mean, gaussian_bg_sd = gaussian_bg_sd) for i in range(3)]
     simulated_sample = np.stack(channels,axis=2)    
     pixelmap_target = simulate_single_layer(layers_list[3], width, height, radius, is_pixelmap = True)
 
     return simulated_sample, pixelmap_target
-
-# TODO : delete after testing
-"""
-    # TODO SO UGLY! HELP! 
-    for i in range(colocalization[0]):
-        x = np.random.randint(radius, width - radius)
-        y = np.random.randint(radius, height - radius)
-        layer0 += [(x,y)]
-        layer1 += [(x,y)]
-        layer2 += [(x,y)]
-        pixelmap += [(x,y)]
-    
-    for i in range(colocalization[1]):
-        x = np.random.randint(radius, width - radius)
-        y = np.random.randint(radius, width - radius)
-        layer0 += [(x,y)]
-        layer1 += [(x,y)]
-        if (coloc_thresh <= 2):
-            pixelmap += (x,y)
-        
-    for i in range(colocalization[2]):
-        x = np.random.randint(radius, width - radius)
-        y = np.random.randint(radius, height - radius)
-        layer1 += [(x,y)]
-        layer2 += [(x,y)]
-        if (coloc_thresh <= 2):
-            pixelmap += (x,y)
-
-    for i in range(colocalization[3]):
-        x = np.random.randint(radius, width - radius)
-        y = np.random.randint(radius, height - radius)
-        layer0 += [(x,y)]
-        layer2 += [(x,y)]
-        if (coloc_thresh <= 2):
-            pixelmap += (x,y)
-        
-    for i in range(colocalization[4]):
-        x = np.random.randint(radius, width - radius)
-        y = np.random.randint(radius, height - radius)
-        layer0 += [(x,y)]
-        if (coloc_thresh <= 1):
-            pixelmap += (x,y)
-    
-    for i in range(colocalization[5]):
-        x = np.random.randint(radius, width - radius)
-        y = np.random.randint(radius, height - radius)
-        layer1 += [(x,y)]
-        if (coloc_thresh <= 1):
-            pixelmap += (x,y)
-
-    for i in range(colocalization[6]):
-        x = np.random.randint(radius, width - radius)
-        y = np.random.randint(radius, height - radius)
-        layer2 += [(x,y)]
-        if (coloc_thresh <= 1):
-            pixelmap += (x,y)
-
-    
-    #channel10 = simulate_single_layer(layer0)
-
-    return layers_list
-    """
-
 
 ##############################################################################
 
@@ -528,7 +463,9 @@ def simulate_single_layer(
         width,
         height,
         radius,
-        is_pixelmap = False
+        is_pixelmap = False,
+        gaussian_bg_mean = None,
+        gaussian_bg_sd = None
         ):
     """
     This function will simulate a single layer given the coordinates for each 
@@ -574,6 +511,12 @@ def simulate_single_layer(
         # finally, population the tensor.
         sim_bump[xx,yy] += activation_list
 
+    # add background moise
+    if gaussian_bg_mean != None and gaussian_bg_sd != None:
+        bg = np.abs(np.random.normal(gaussian_bg_mean, gaussian_bg_sd, (width,height)))
+        #print(len(sim_bump[sim_bump ==0 ]))
+        sim_bump[sim_bump == 0] += bg[sim_bump == 0]
+
     # Okay here, lets correct for the number things greater and equal to one.
     # the main idea is: a by-product of our algorithm is that the center of all
     # synapses have an activation == to 1. we should correct for this 
@@ -581,7 +524,6 @@ def simulate_single_layer(
     if not is_pixelmap:
         sim_bump[sim_bump > 1] = 1
         num_ones = len(sim_bump[sim_bump == 1])
-        # add some noise to the 1's?
         sim_bump[sim_bump == 1] += -1 * np.abs(np.random.normal(0,0.1,num_ones))
     
     assert(len(sim_bump[sim_bump > 1]) == 0)
