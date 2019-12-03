@@ -281,18 +281,18 @@ def f1_score(pixelmap1, pixelmap2):
 
 ##############################################################################
 
-def split_data():
-    pass
-
-
-
-
-##############################################################################
-
-# TODO impliment and remove stub :)
-def simulated_generator_stub(width=10, height=10, num_spots=1, radius=3):
+def simulated_confocal_image(width=10, 
+                height=10, 
+                num_spots=2,
+                radius=3):
     """
-    this function will 
+
+    Deprecated
+
+    this function will take in parameters to define a 
+    simulated confocal microscopy with three channels.
+    
+
 
 
     width:
@@ -300,23 +300,40 @@ def simulated_generator_stub(width=10, height=10, num_spots=1, radius=3):
     num_spots:
     radius:
 
+    :return:
 
-    This function will return a simulated example (x) amd a simulated target (y)
-
-    #IDEAS/TODO: variance on (max) radius
-    #slightly offset center
+    #IDEAS/TODO: 
+    -- variance on (max?) radius for each synapse (and maybe even channels?)
+    -- slightly offset center (actually not sure we need to do this b/c 
+    moving the center by a whole pixel may, idk.)
+    -- vectorize this a little more? maybe not completely necessary
+    -- make sure the center of all synapses is NOT one (they are currently)? 
+        This may make it to easy to learn and is definitely not the case for 
+    -- Make non-colocalized dots!
+    -- Add background noise ... 
+    -- This function could be quite a bit more complex ... we are simulating 
+    
+    Little thought here: It seems like 
     """    
     
-    sim_example = np.zeros([width, height, 3])
+    # init the tensors to be returned
+    sim_bump = np.zeros([width, height, 3])
     sim_target = np.zeros([width, height])
 
+    # choose the x,y location of all co-localized dots.
     x_vector = np.random.randint(radius, width - radius, num_spots)
     y_vector = np.random.randint(radius, height - radius, num_spots)
 
+    # Step through all the x,y locations where the dots will be located 
+    # on each channel,
     for x,y in zip(x_vector, y_vector):
+    
+        # Draw nice circle, Then we're done with
+        # the pixel map "groud truth / y"
+        # 
         xx,yy = circle(x,y,radius)
         sim_target[xx,yy] = 1
-        activation_list = np.zeros([3,len(xx)])
+        activation_list = np.zeros([3,len(xx)])        
 
         for i in range(len(xx)):
             diff_x = xx[i] - x
@@ -328,13 +345,249 @@ def simulated_generator_stub(width=10, height=10, num_spots=1, radius=3):
                 activation_with_noise = activation + np.abs(np.random.normal(0,0.1))
                 activation_list[j,i] = activation_with_noise
                 
+        
         for i in range(3):
-            sim_example[xx,yy,i] += activation_list[i,:]
+            sim_bump[xx,yy,i] += activation_list[i,:]
 
-        sim_example[sim_example > 1] = 1
+    # Okay here, lets correct for the number things greater and equal to one.
+    # the main idea is: a by-product of our algorithm is that the center of all
+    # synapses have an activation == to 1. we should correct for this 
+    # because it's not realistic
+    
+    sim_bump[sim_bump > 1] = 1
 
 
-    return sim_example, sim_target
+    return sim_bump, sim_target
+
+##############################################################################
+
+# TODO Impliment
+def generate_whole_dataset_stub():
+    """
+    Come up with a simpler interface for running and saving a bunch of 
+    these images.
+    """
+    pass
+
+
+##############################################################################
+
+def generate_simulated_microscopy_sample(
+        colocalization = [5] + [0 for _ in range(6)],
+        width = 32,
+        height = 32,
+        radius = 2,
+        coloc_thresh = 3):
+    
+    # TODO max radius size? make a radius vector for each layer of
+    # x,y coordinates to introduce some more noise! mo betta.
+
+    # TODO Clean up and re-do docs and testing!
+
+    # TODO HOW ARE WE GOING TO HANDLE BACKGROUND - gotta be a clever 
+    # way which includes image morphology ... 
+
+    # TODO Clipping input data to the valid range for 
+    # imshow with RGB data ([0..1] for floats or [0..255] for integers).
+
+    """
+    :param: colocalization <list> - a list which contains the 7 colocal counts!
+        the params should be in the following order:
+            idx - colocal meaning
+            0 - all_layers share. as well as the pixelmap
+            1 - just the 0, and 1 share
+            2 - just the 1 and 2 share
+            3 - just the 0 and 2 share
+            4 - just 0
+            5 - just 1
+            6 - just 2
+            
+    :param: width <int> - width of the sample 
+    
+    :param: height <int> - height of the sample
+    
+    :param: radius <int> - radius of bumps
+
+    :return: (3D numpy tensor, 2D numpy tensor) - this is going to 
+        be the simulated 
+
+    Here, we take in amount of spots wanted as either colocalized
+    on any combination of channels 0, 1, and 2, or singlet on any layer.
+
+    This leaves 7 possibilities:
+        
+        1X Complete Co-localization - all layers have this bump
+        3X double co-loc, 3 choose 2 combinations of co-pair-bumps
+        3X singlet bumps
+
+
+    Given these 7 params, this function computes the x,y vectors
+    for each three layers so they may be created seperately and 
+    finally stacked into the 3D tensor representing simulated 
+    confocal image with parameterized co-localization. 
+    """
+    
+    assert(len(colocalization) == 7)
+    assert(radius < (width // 2) and radius < (height // 2))
+    assert(coloc_thresh in [1,2,3])
+    
+    # initialize out empty layers.
+    #layer0, layer1, layer2, pixelmap = ([] for _ in range(4))
+
+    # Hm, if you bored, you could generalize this 
+    # colocalization algorithm getting all combinations in a set
+    
+    # the first three are the layers for the simulated sample,
+    # the last later is the pixelmap target
+    layers_list = [[] for _ in range(4)]
+    combs = [[0,1,2],[0,1],[1,2],[0,2],[0],[1],[2]]
+  
+    for i,layers in enumerate(combs):
+        for num_dots in range(colocalization[i]):
+            x = np.random.randint(radius, width - radius)
+            y = np.random.randint(radius, height - radius)
+            #print("layers: ", layers)
+            for layer_index in layers:
+                layers_list[layer_index] += [(x,y)]
+            if len(layers) >= coloc_thresh:
+                layers_list[3] += [(x,y)]
+
+    #return layers_list
+    
+    channels = [simulate_single_layer(layers_list[i], width, height, radius) for i in range(3)]
+    simulated_sample = np.stack(channels,axis=2)    
+    pixelmap_target = simulate_single_layer(layers_list[3], width, height, radius)
+
+    return simulated_sample, pixelmap_target
+
+# TODO : delete after testing
+"""
+    # TODO SO UGLY! HELP! 
+    for i in range(colocalization[0]):
+        x = np.random.randint(radius, width - radius)
+        y = np.random.randint(radius, height - radius)
+        layer0 += [(x,y)]
+        layer1 += [(x,y)]
+        layer2 += [(x,y)]
+        pixelmap += [(x,y)]
+    
+    for i in range(colocalization[1]):
+        x = np.random.randint(radius, width - radius)
+        y = np.random.randint(radius, width - radius)
+        layer0 += [(x,y)]
+        layer1 += [(x,y)]
+        if (coloc_thresh <= 2):
+            pixelmap += (x,y)
+        
+    for i in range(colocalization[2]):
+        x = np.random.randint(radius, width - radius)
+        y = np.random.randint(radius, height - radius)
+        layer1 += [(x,y)]
+        layer2 += [(x,y)]
+        if (coloc_thresh <= 2):
+            pixelmap += (x,y)
+
+    for i in range(colocalization[3]):
+        x = np.random.randint(radius, width - radius)
+        y = np.random.randint(radius, height - radius)
+        layer0 += [(x,y)]
+        layer2 += [(x,y)]
+        if (coloc_thresh <= 2):
+            pixelmap += (x,y)
+        
+    for i in range(colocalization[4]):
+        x = np.random.randint(radius, width - radius)
+        y = np.random.randint(radius, height - radius)
+        layer0 += [(x,y)]
+        if (coloc_thresh <= 1):
+            pixelmap += (x,y)
+    
+    for i in range(colocalization[5]):
+        x = np.random.randint(radius, width - radius)
+        y = np.random.randint(radius, height - radius)
+        layer1 += [(x,y)]
+        if (coloc_thresh <= 1):
+            pixelmap += (x,y)
+
+    for i in range(colocalization[6]):
+        x = np.random.randint(radius, width - radius)
+        y = np.random.randint(radius, height - radius)
+        layer2 += [(x,y)]
+        if (coloc_thresh <= 1):
+            pixelmap += (x,y)
+
+    
+    #channel10 = simulate_single_layer(layer0)
+
+    return layers_list
+    """
+
+
+##############################################################################
+
+def simulate_single_layer(
+        xy_list,
+        width,
+        height,
+        radius,
+        is_pixelmap = False
+        ):
+    """
+    This function will simulate a single layer given the coordinates for each 
+    exponential bump!
+    """    
+    
+
+    # not implimented yet
+    assert(type(radius) == int)
+
+    # init the tensor to be returned.
+    sim_bump = np.zeros([width, height])
+
+    # Step through all the x,y locations where the dots will be located 
+    # on each channel,
+    for x,y in xy_list:
+    
+        # Draw nice circle and init an array to store
+        # respective activations,
+        xx,yy = circle(x,y,radius)
+        if is_pixelmap:
+            sum_bump[xx,yy] = xx,yy
+            
+
+        activation_list = np.zeros(len(xx))
+
+        # for each location that is a synapse
+        # we are going to compute the activation 
+        for i in range(len(xx)):
+
+            # use pythagorian theorem to comput radius on discrete space!
+            diff_from_center = math.sqrt((xx[i] - x)**2 + (yy[i] - y)**2)
+
+            # This is where we sample from the exponential "bump"
+            # Question, How dow we make this bump wider, @ Annie
+            # I would like for the majority of the numbers not to 
+            # be so small :)
+            activation = np.exp(-(diff_from_center**2))
+       
+            # we then add guassian noise the add another level of randomness 
+            activation_list[i] = activation + np.abs(np.random.normal(0,0.1))
+
+        # finally, population the tensor.
+        sim_bump[xx,yy] += activation_list
+
+    # Okay here, lets correct for the number things greater and equal to one.
+    # the main idea is: a by-product of our algorithm is that the center of all
+    # synapses have an activation == to 1. we should correct for this 
+    # because it's not realistic
+    
+    sim_bump[sim_bump > 1] = 1
+    num_ones = len(sim_bump[sim_bump == 1])
+    sim_bump[sim_bump == 1] -= -1 * np.abs(np.random.normal(0,0.1,num_ones))
+
+    return sim_bump
+
+
 
 
 
