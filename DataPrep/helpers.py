@@ -390,9 +390,6 @@ def generate_simulated_microscopy_sample(
     # TODO Clipping input data to the valid range for 
     # imshow with RGB data ([0..1] for floats or [0..255] for integers).
 
-    # TODO There is an error being thrown that has to do with scaling 
-    # images from 0 to 1. 
-    # Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).
 
     """
     :param: colocalization <list> - a list which contains the 7 colocal counts!
@@ -457,7 +454,7 @@ def generate_simulated_microscopy_sample(
 
     channels = [simulate_single_layer(layers_list[i], width, height, radius) for i in range(3)]
     simulated_sample = np.stack(channels,axis=2)    
-    pixelmap_target = simulate_single_layer(layers_list[3], width, height, radius)
+    pixelmap_target = simulate_single_layer(layers_list[3], width, height, radius, is_pixelmap = True)
 
     return simulated_sample, pixelmap_target
 
@@ -553,7 +550,7 @@ def simulate_single_layer(
         # respective activations,
         xx,yy = circle(x,y,radius)
         if is_pixelmap:
-            sim_bump[xx,yy] = xx,yy
+            sim_bump[xx,yy] = 1
             continue
 
         activation_list = np.zeros(len(xx))
@@ -581,10 +578,13 @@ def simulate_single_layer(
     # the main idea is: a by-product of our algorithm is that the center of all
     # synapses have an activation == to 1. we should correct for this 
     # because it's not realistic
+    if not is_pixelmap:
+        sim_bump[sim_bump > 1] = 1
+        num_ones = len(sim_bump[sim_bump == 1])
+        # add some noise to the 1's?
+        sim_bump[sim_bump == 1] += -1 * np.abs(np.random.normal(0,0.1,num_ones))
     
-    sim_bump[sim_bump > 1] = 1
-    num_ones = len(sim_bump[sim_bump == 1])
-    sim_bump[sim_bump == 1] -= -1 * np.abs(np.random.normal(0,0.1,num_ones))
+    assert(len(sim_bump[sim_bump > 1]) == 0)
 
     return sim_bump
 
