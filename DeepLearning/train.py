@@ -58,8 +58,18 @@ colocalized_output = colocalization([pixelmap1,pixelmap2,pixelmap3])
 sub_annotations = sub_patch_pixelmap(colocalized_output)
 sub_annotations = np.expand_dims(sub_annotations, axis=3)
 
+for i in range(20):
+    plt.imshow(empirical_output[i,:,:,:])
+    plt.show()
+sys.exit()
+
 x = empirical_output
 y = sub_annotations
+
+#print(x.shape)
+#print(y.shape)
+
+sys.exit()
 
 # TODO should probably shuffle before here
 

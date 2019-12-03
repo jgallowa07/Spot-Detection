@@ -303,7 +303,7 @@ def simulated_generator_stub(width=10, height=10, num_spots=1, radius=3):
 
     This function will return a simulated example (x) amd a simulated target (y)
 
-    #IDEAS/TODO: variance on radius
+    #IDEAS/TODO: variance on (max) radius
     #slightly offset center
     """    
     
@@ -316,34 +316,23 @@ def simulated_generator_stub(width=10, height=10, num_spots=1, radius=3):
     for x,y in zip(x_vector, y_vector):
         xx,yy = circle(x,y,radius)
         sim_target[xx,yy] = 1
-        #activation_list = np.zeros([3,len(xx)])
-        activation_list = np.zeros(len(xx))
+        activation_list = np.zeros([3,len(xx)])
 
         for i in range(len(xx)):
             diff_x = xx[i] - x
             diff_y = yy[i] - y
             diff_from_center = math.sqrt(diff_x**2 + diff_y**2)
             activation = np.exp(-(diff_from_center**2))
-            activation_list[i] = activation
-            #activation_list[:,i] = activation
-
         
-            #for j in range(3):
-                #activation_with_noise = activation + np.random.normal(0,0.1)
-                #if(activation_with_noise > 1):
-                #    print("too large")
-                #activation_with_noise = 1
-                #if(activation_with_noise < 1):
-                #    print("too small")
-                #    activation_with_noise = 0
-                #activation_list[j,i] = activation_with_noise
-
-                #activation_list[j,i] = activation
+            for j in range(3):
+                activation_with_noise = activation + np.abs(np.random.normal(0,0.1))
+                activation_list[j,i] = activation_with_noise
                 
-        #for i in range(3):
-        #    sim_example[xx,yy,i] = activation_list[i]
+        for i in range(3):
+            sim_example[xx,yy,i] += activation_list[i,:]
 
-        sim_example[xx,yy,0] = activation_list
+        sim_example[sim_example > 1] = 1
+
 
     return sim_example, sim_target
 
