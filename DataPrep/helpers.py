@@ -390,6 +390,10 @@ def generate_simulated_microscopy_sample(
     # TODO Clipping input data to the valid range for 
     # imshow with RGB data ([0..1] for floats or [0..255] for integers).
 
+    # TODO There is an error being thrown that has to do with scaling 
+    # images from 0 to 1. 
+    # Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).
+
     """
     :param: colocalization <list> - a list which contains the 7 colocal counts!
         the params should be in the following order:
@@ -446,14 +450,11 @@ def generate_simulated_microscopy_sample(
         for num_dots in range(colocalization[i]):
             x = np.random.randint(radius, width - radius)
             y = np.random.randint(radius, height - radius)
-            #print("layers: ", layers)
             for layer_index in layers:
                 layers_list[layer_index] += [(x,y)]
             if len(layers) >= coloc_thresh:
                 layers_list[3] += [(x,y)]
 
-    #return layers_list
-    
     channels = [simulate_single_layer(layers_list[i], width, height, radius) for i in range(3)]
     simulated_sample = np.stack(channels,axis=2)    
     pixelmap_target = simulate_single_layer(layers_list[3], width, height, radius)
