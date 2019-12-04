@@ -290,7 +290,8 @@ def generate_whole_dataset_stub():
 
 ##############################################################################
 
-def add_normal_noise_to_image(image, gaussian_bg_sd):
+# TODO This could obviously be made much more complex
+def add_normal_noise_to_image(image, gaussian_bg_sd, background_only = True):
     """
     this image adds background noise (absolute value 
     Gaussian centered at zero) with variance gaussian_bg_sd,
@@ -302,7 +303,18 @@ def add_normal_noise_to_image(image, gaussian_bg_sd):
     # add background noise to an image
     gaussian_bg_mean = 0
     bg = np.abs(np.random.normal(gaussian_bg_mean, gaussian_bg_sd, image.shape))
-    image[image == 0] += bg[image == 0]
+
+    # add the noise to image param, skipping the dots, if required
+    # image[image == 0] += bg[image == 0] if backgound_only else image += bg
+    if background_only:
+        image[image == 0] += bg[image == 0] 
+    else:
+        image += bg
+
+    # correct for values above 1!
+    image[image > 1] = 1
+
+    
 
 ##############################################################################
 
@@ -382,9 +394,11 @@ def generate_simulated_microscopy_sample(
             if len(layers) >= coloc_thresh:
                 layers_list[3] += [(x,y)]
 
-    channels = [simulate_single_layer(layers_list[i], width, height, radius) for i in range(3)]
+    channels = [simulate_single_layer(
+        layers_list[i], width, height, radius) for i in range(3)]
     simulated_sample = np.stack(channels,axis=2)    
-    pixelmap_target = simulate_single_layer(layers_list[3], width, height, radius, is_pixelmap = True)
+    pixelmap_target = simulate_single_layer(
+        layers_list[3], width, height, radius, is_pixelmap = True)
 
     return simulated_sample, pixelmap_target
 
@@ -426,7 +440,7 @@ def simulate_single_layer(
         # we are going to compute the activation 
         for i in range(len(xx)):
 
-            # use pythagorian theorem to comput radius on discrete space!
+            # use pythagorian theorem to compute radius on discrete space!
             diff_from_center = math.sqrt((xx[i] - x)**2 + (yy[i] - y)**2)
 
             # This is where we sample from the exponential "bump"
@@ -441,11 +455,11 @@ def simulate_single_layer(
         # finally, population the tensor.
         sim_bump[xx,yy] += activation_list
 
-
     # Okay here, lets correct for the number things greater and equal to one.
     # the main idea is: a by-product of our algorithm is that the center of all
     # synapses have an activation == to 1. we should correct for this 
     # because it's not realistic
+    # TODO This could be done slightly more effeciently.
     if not is_pixelmap:
         sim_bump[sim_bump > 1] = 1
         num_ones = len(sim_bump[sim_bump == 1])

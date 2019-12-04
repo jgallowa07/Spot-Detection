@@ -84,7 +84,11 @@ for i in range(num_samples):
         colocalization = [2] + [0 for _ in range(6)],
         width = width,
         height = height)
-    add_normal_noise_to_image(X,0.01)
+
+    # negative control
+    #X = np.zeros([width, height, 3])
+    
+    add_normal_noise_to_image(X,0.1)
     x[i] = X
     y[i] = Y
 y = np.reshape(y, [num_samples, width, height, 1])
