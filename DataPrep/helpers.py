@@ -278,87 +278,6 @@ def f1_score(pixelmap1, pixelmap2):
 
     return 2/((1/precision) + (1/recall))
 
-
-##############################################################################
-
-def simulated_confocal_image(width=10, 
-                height=10, 
-                num_spots=2,
-                radius=3):
-    """
-
-    Deprecated
-
-    this function will take in parameters to define a 
-    simulated confocal microscopy with three channels.
-    
-
-
-
-    width:
-    height:
-    num_spots:
-    radius:
-
-    :return:
-
-    #IDEAS/TODO: 
-    -- variance on (max?) radius for each synapse (and maybe even channels?)
-    -- slightly offset center (actually not sure we need to do this b/c 
-    moving the center by a whole pixel may, idk.)
-    -- vectorize this a little more? maybe not completely necessary
-    -- make sure the center of all synapses is NOT one (they are currently)? 
-        This may make it to easy to learn and is definitely not the case for 
-    -- Make non-colocalized dots!
-    -- Add background noise ... 
-    -- This function could be quite a bit more complex ... we are simulating 
-    
-    Little thought here: It seems like 
-    """    
-    
-    # init the tensors to be returned
-    sim_bump = np.zeros([width, height, 3])
-    sim_target = np.zeros([width, height])
-
-    # choose the x,y location of all co-localized dots.
-    x_vector = np.random.randint(radius, width - radius, num_spots)
-    y_vector = np.random.randint(radius, height - radius, num_spots)
-
-    # Step through all the x,y locations where the dots will be located 
-    # on each channel,
-    for x,y in zip(x_vector, y_vector):
-    
-        # Draw nice circle, Then we're done with
-        # the pixel map "groud truth / y"
-        # 
-        xx,yy = circle(x,y,radius)
-        sim_target[xx,yy] = 1
-        activation_list = np.zeros([3,len(xx)])        
-
-        for i in range(len(xx)):
-            diff_x = xx[i] - x
-            diff_y = yy[i] - y
-            diff_from_center = math.sqrt(diff_x**2 + diff_y**2)
-            activation = np.exp(-(diff_from_center**2))
-        
-            for j in range(3):
-                activation_with_noise = activation + np.abs(np.random.normal(0,0.1))
-                activation_list[j,i] = activation_with_noise
-                
-        
-        for i in range(3):
-            sim_bump[xx,yy,i] += activation_list[i,:]
-
-    # Okay here, lets correct for the number things greater and equal to one.
-    # the main idea is: a by-product of our algorithm is that the center of all
-    # synapses have an activation == to 1. we should correct for this 
-    # because it's not realistic
-    
-    sim_bump[sim_bump > 1] = 1
-
-
-    return sim_bump, sim_target
-
 ##############################################################################
 
 # TODO Impliment
@@ -369,6 +288,21 @@ def generate_whole_dataset_stub():
     """
     pass
 
+##############################################################################
+
+def add_normal_noise_to_image(image, gaussian_bg_sd):
+    """
+    this image adds background noise (absolute value 
+    Gaussian centered at zero) with variance gaussian_bg_sd,
+    to each pixel channel which is currently
+    not already activated (activation 0). 
+
+    for more noise, simply add variance.
+    """
+    # add background noise to an image
+    gaussian_bg_mean = 0
+    bg = np.abs(np.random.normal(gaussian_bg_mean, gaussian_bg_sd, image.shape))
+    image[image == 0] += bg[image == 0]
 
 ##############################################################################
 
@@ -377,9 +311,8 @@ def generate_simulated_microscopy_sample(
         width = 32,
         height = 32,
         radius = 2,
-        coloc_thresh = 3,
-        gaussian_bg_mean = 0,
-        gaussian_bg_sd = 0.1):
+        coloc_thresh = 3
+        ):
     
     # TODO max radius size? make a radius vector for each layer of
     # x,y coordinates to introduce some more noise! mo betta.
@@ -449,8 +382,7 @@ def generate_simulated_microscopy_sample(
             if len(layers) >= coloc_thresh:
                 layers_list[3] += [(x,y)]
 
-    channels = [simulate_single_layer(layers_list[i], width, height, radius, 
-            gaussian_bg_mean = gaussian_bg_mean, gaussian_bg_sd = gaussian_bg_sd) for i in range(3)]
+    channels = [simulate_single_layer(layers_list[i], width, height, radius) for i in range(3)]
     simulated_sample = np.stack(channels,axis=2)    
     pixelmap_target = simulate_single_layer(layers_list[3], width, height, radius, is_pixelmap = True)
 
@@ -464,8 +396,6 @@ def simulate_single_layer(
         height,
         radius,
         is_pixelmap = False,
-        gaussian_bg_mean = None,
-        gaussian_bg_sd = None
         ):
     """
     This function will simulate a single layer given the coordinates for each 
@@ -511,11 +441,6 @@ def simulate_single_layer(
         # finally, population the tensor.
         sim_bump[xx,yy] += activation_list
 
-    # add background moise
-    if gaussian_bg_mean != None and gaussian_bg_sd != None:
-        bg = np.abs(np.random.normal(gaussian_bg_mean, gaussian_bg_sd, (width,height)))
-        #print(len(sim_bump[sim_bump ==0 ]))
-        sim_bump[sim_bump == 0] += bg[sim_bump == 0]
 
     # Okay here, lets correct for the number things greater and equal to one.
     # the main idea is: a by-product of our algorithm is that the center of all
