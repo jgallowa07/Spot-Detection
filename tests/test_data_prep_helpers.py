@@ -257,10 +257,25 @@ class TestHelpers(tests.testDataPrep):
         self.assertEqual(F1_test, (1/3))
 
 
-    def test_simulated_image(self)
+
+    def test_generate_simulated_microscopy_sample(self):
+        """
+            tests for simulating a single layer
+        """
+
+        x,y = generate_simulated_microscopy_sample(colocalization = [1,1,1,1,1,1,1], 
+        width=32, height=32, coloc_thresh = 2)
+
+        self.assertEqual(x.shape, (32,32,3))
+        self.assertEqual(y.shape, (32,32))
+
+
+        x,y = generate_simulated_microscopy_sample(colocalization = [5,1,1,1,1,1,1], 
+        width=32, height=32, coloc_thresh = 2)
+
 
         
-        for i in range(30):
+        
             
 
 
