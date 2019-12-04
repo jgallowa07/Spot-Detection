@@ -257,4 +257,10 @@ class TestHelpers(tests.testDataPrep):
         self.assertEqual(F1_test, (1/3))
 
 
+    def test_simulated_image(self)
+
+        
+        for i in range(30):
+            
+
 

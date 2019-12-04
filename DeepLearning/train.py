@@ -20,6 +20,7 @@ import tensorflow as tf
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 from matplotlib import pyplot as plt
 from networks import *
+import time
 
 from DataPrep.helpers  import *
 
@@ -58,10 +59,10 @@ colocalized_output = colocalization([pixelmap1,pixelmap2,pixelmap3])
 sub_annotations = sub_patch_pixelmap(colocalized_output)
 sub_annotations = np.expand_dims(sub_annotations, axis=3)
 
-for i in range(20):
-    plt.imshow(empirical_output[i,:,:,:])
-    plt.show()
-sys.exit()
+#for i in range(20):
+#    plt.imshow(empirical_output[i,:,:,:])
+#    plt.show()
+#sys.exit()
 
 x = empirical_output
 y = sub_annotations
@@ -69,9 +70,24 @@ y = sub_annotations
 #print(x.shape)
 #print(y.shape)
 
-sys.exit()
+#sys.exit()
 
 # TODO should probably shuffle before here
+
+num_samples = 2500
+width = 32
+height = 32
+x = np.zeros([num_samples, width, height, 3])
+y = np.zeros([num_samples, width, height])
+for i in range(num_samples):
+    X, Y = generate_simulated_microscopy_sample(
+        colocalization = [2] + [0 for _ in range(6)],
+        width = width,
+        height = height)
+    add_normal_noise_to_image(X,0.01)
+    x[i] = X
+    y[i] = Y
+y = np.reshape(y, [num_samples, width, height, 1])
 
 print(x.shape)
 print(y.shape)
