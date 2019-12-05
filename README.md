@@ -110,20 +110,3 @@ Conceptually, Dataprep is just a plethora of helpful function we use
 to simulate, train on, and transform data to accomplish the task of 
 spot detection.
 
-* the transformation of
-various file formats such as PASCAL-VOL, JSON, and symquant output into
-_pixelmaps_. These maps are simply binary, 2-dimensional `numpy ndarray`'s 
-which have 1's labeling synapses and 0's for background. 
-
-TODO: Give example 
-
-## DeepLearning
-
-The DeepLearning Directory currently contains the network 
-architecture, as well as script used for training / testing.
-
-## tests
-
-This repository contains all `nosetests` which will be used to test ALL 
-functions implemented in this repository. To run the unit tests, simply 
-type `python3 -m nose tests`.
