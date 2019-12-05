@@ -260,20 +260,82 @@ class TestHelpers(tests.testDataPrep):
 
     def test_generate_simulated_microscopy_sample(self):
         """
-            tests for simulating a single layer
+            tests for simulating one target and one set of three example images
         """
 
-        x,y = generate_simulated_microscopy_sample(colocalization = [1,1,1,1,1,1,1], 
-        width=32, height=32, coloc_thresh = 2)
+        width = 32
+        height = 32
 
+        x,y = generate_simulated_microscopy_sample(colocalization = [1,1,1,1,1,1,1], 
+        width=width, height=height, coloc_thresh = 2)
+
+        # Test x and y shape
         self.assertEqual(x.shape, (32,32,3))
         self.assertEqual(y.shape, (32,32))
 
+        # Test to make sure x and y have the same number of 0s within
+        example_zero_count_channel0 = 0
+        example_zero_count_channel1 = 0
+        target_zero_count = 0
+        for i in range(height):
+            for j in range(width):
+                if(x[i][j][0] == 0):
+                    example_zero_count_channel0 += 1
+                if(x[i][j][1] == 0):
+                    example_zero_count_channel1 += 1
+                if(y[i][j] == 0):
+                    target_zero_count += 1
+        self.assertEqual(example_zero_count_channel0, target_zero_count)
+        self.assertEqual(example_zero_count_channel1, target_zero_count)
 
-        x,y = generate_simulated_microscopy_sample(colocalization = [5,1,1,1,1,1,1], 
+
+        x,y = generate_simulated_microscopy_sample(colocalization = [0,0,0,1,0,0,0], 
         width=32, height=32, coloc_thresh = 2)
 
+        # Test x and y shape
+        self.assertEqual(x.shape, (32,32,3))
+        self.assertEqual(y.shape, (32,32))
 
+        # Test to make colocalization is working properly
+        example_zero_count_channel0 = 0
+        example_zero_count_channel1 = 0
+        target_zero_count = 0
+        for i in range(height):
+            for j in range(width):
+                if(x[i][j][0] == 0):
+                    example_zero_count_channel0 += 1
+                if(x[i][j][1] == 0):
+                    example_zero_count_channel1 += 1
+                if(y[i][j] == 0):
+                    target_zero_count += 1
+        self.assertEqual(example_zero_count_channel0, target_zero_count)
+        # channel one should have more 0s than the target because on this test there is only colocalization between channel 0 and 2
+        self.assertTrue(example_zero_count_channel1 > target_zero_count)
+
+
+        x,y = generate_simulated_microscopy_sample(colocalization = [0,0,0,1,0,0,0], 
+        width=32, height=32, coloc_thresh = 3)
+
+        # Test x and y shape
+        self.assertEqual(x.shape, (32,32,3))
+        self.assertEqual(y.shape, (32,32))
+
+        # Test to make sure coloc_thresh is working properly
+        example_zero_count_channel0 = 0
+        example_zero_count_channel2 = 0
+        target_zero_count = 0
+        for i in range(height):
+            for j in range(width):
+                if(x[i][j][0] == 0):
+                    example_zero_count_channel0 += 1
+                if(x[i][j][2] == 0):
+                    example_zero_count_channel2 += 1
+                if(y[i][j] == 0):
+                    target_zero_count += 1
+        self.assertEqual(example_zero_count_channel2, example_zero_count_channel0)
+        # channel one and the target should have the same number of 0s because the coloc_thresh was set to 3
+        self.assertEqual(example_zero_count_channel1, target_zero_count)
+        self.assertTrue(target_zero_count > example_zero_count_channel0)
         
         
             
