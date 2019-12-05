@@ -11,7 +11,7 @@ synapse detection pipeline given confocal microscopy images.
 Generally we use train-through-simulation technique which requires 
 _no_ annotated empirical images, while remaining supervised.
 The simulations parameters can be tuned simply to more closely match data of interest.
-While this has been done before, (TODO cite) our method focuses on simplicity, 
+While this has been done before, (TODO cite) our method focuses on simplicity, effeciency. 
 colocalization between image channels, and easy training of a model which can then be
 used directly on empirical data.
 
@@ -74,9 +74,24 @@ To ensure everything is running as it should.
 ## Quickstart
 
 Here is an example of how to simulate a single 32 X 32 image with 
-3 fully colocalized dots.
+1 r+g+b dot, 1 r+b, 1 r+g, 1 g+b, 1 r, 1 g, 1b ... For each image 
+generate we also generate the 2D pixel map describing the groud truth
+for bumps which colocalize at least `coloc_thresh` times across the RGB
+channels.  
 
+```python
+# simulate example
+x,y = generate_simulated_microscopy_sample(colocalization = [1,1,1,1,1,1,1], width=32, height=32, coloc_thresh = 2)
 
+# add noise to each pixel of background pulled from gaussian with variance = 0.1, mean 0
+add_normal_noise_to_image(x,0.1)
+
+# visualize 
+plt.imshow(x)
+plt.show()
+```
+
+More examples coming soon to a README near you ...
 
 ## Clicking
 
