@@ -33,15 +33,19 @@ def initial_CNN_map(x,y):
         
     return cpd_model
 
+def cnn_to_probability_map_sequential(x,y):
+    pass
+    
 
-    def initial_CNN_count(data):
-        """
-        This function is in charge of taking in the testing and training data and
-        returning a model object that we can use within train.py. This model will
-        be creating a final output that is just a count of synapses detected.
 
-        params:
+def initial_CNN_count(data):
+    """
+    This function is in charge of taking in the testing and training data and
+    returning a model object that we can use within train.py. This model will
+    be creating a final output that is just a count of synapses detected.
 
-        This function returns a TensorFlow model object
-        """
-        pass
+    params:
+
+    This function returns a TensorFlow model object
+    """
+    pass
