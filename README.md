@@ -1,14 +1,48 @@
-# Synapse detection.
+# Super Mega McEasy Dot Net. 
 
+Obviously we need a better name. haha. 
+
+**Overview**
 This repository contains the code for UO BGMP synapse detection group working 
-for the Washburn Lab (TODO LINK THIS) to create, and quantify the accuracy of a
-synapse detection pipeline given confocal micrascopy images.
+for the 
+[Washburn Lab](https://ion.uoregon.edu/content/philip-washbourne) 
+to create, and quantify the accuracy of a
+synapse detection pipeline given confocal microscopy images.
+Generally we use train-through-simulation technique which requires 
+_no_ annotated empirical images, while remaining supervised.
+The simulations parameters can be tuned simply to more closely match data of interest.
+While this has been done before, (TODO cite) our method focuses on simplicity, 
+colocalization between image channels, and easy training of a model which can then be
+used directly on empirical data.
 
-This project has three main aspects of the project
-that are reflected in this repository. Annotation of images, quantification 
-of other methods, and a custom deep learning model (TBA).
+**1. simulation** :
+This package takes a few parameters such as dot radius, background noise variance,
+and a few others to simulate the _colocalization_ of 2D exponential  bumps across
+3 different channels. Often with florescent microscopy images such immuno-labeling,
+it is necessary for "dots" to be seen across some channels or all channels to be 
+of interest. Our simulation interface allows users to specify the amount 
+of complete colocalization (a bump shared across all channels) bi-localized? 
+(across two channels, for any combination), and singlet bumps on any one of the
+channels independently. These bumps are centered at some x,y location on 
+any one channel, and the activation of each pixel depends on the euclidean 
+distance to the center of the dot given, where the number of pixels for 
+any one center is defined by the radius in pixels. Given distance to the 
+center of a dot, the activation is calculated by the exponential <annie>
+and incremented by some some Gaussian noise. -- TODO finish
 
-## Usage
+**2. Deep Learning**
+Once a dataset has modeled dots/bumps/spots sufficiently, 
+we use a relatively strait-forward convolutional neural network architecture
+which takes 3-channel images (3D tensors), and outputs probability maps 
+(2D tensors) describing whether or not that pixel is part of a dot-of-interest.
+We measure the accuracy of our model by the F1-score (precision and recall values)
+described below. -- TODO finish
+
+**3. Predict Empirical Synapses**
+TODO
+
+
+## Installation
 
 This repository has a number of dependencies which should be strait-forward 
 to install with your favorite package manager.
@@ -26,7 +60,7 @@ FINISH.
 
 Simply run 
 `git clone https://github.com/2019-bgmp/bgmp-group-project-ml-neuron-id.git`
-before creating a new conda environment (reccomended)
+before creating a new conda environment (recommended)
 and installing the dependencies above.
 
 Once installed run:
@@ -37,40 +71,12 @@ python3 -m nose tests
 
 To ensure everything is running as it should.
 
-## CODE.
+## Quickstart
 
-The directory for this structure is as follows:
+Here is an example of how to simulate a single 32 X 32 image with 
+3 fully colocalized dots.
 
-```bash
-├── Clicking
-│   ├── cv2_example.py
-│   ├── helpers.py
-│   └── sandbox.py
-├── Data
-│   ├── Annotation
-│   ├── Empirical
-│   ├── Prepped_Annotation
-│   └── Prepped_Empirical
-├── DataPrep
-│   ├── PrepEmp.py
-│   ├── dev_sandbox.py
-│   └── helpers.py
-├── DeepLearning
-│   ├── networks.py
-│   └── train.py
-├── README.md
-├── TODO.md
-├── project_documents
-│   ├── BGMP_ML\ Bib.pdf
-│   ├── Definitions.md
-│   ├── Questions_for_Sarah.txt
-│   ├── Stednitz_bgmp_proposal.pdf
-│   ├── email_drafts.txt
-│   └── readings
-└── tests
-    ├── __init__.py
-    └── test_data_prep_helpers.py
-```
+
 
 ## Clicking
 
@@ -78,39 +84,31 @@ First, we have created a script which
 will accurately annotate images by simply clicking on region of inters. Using
 cv2, the script writes out PASCAL-VOL style csv which gives a bounding box
 for each annotated synapse which has been clicked. These images
-are used both to quantify existing methods, as well as train and test our own.
+are used both to quantify existing methods, as well as test our own.
 
-TODO: Give example.
+TODO: We should make a script which can will allow the user to make a pixel map 
+of a 32 X 32 image! This would be a much better way to quantify, no?
 
 ## DataPrep
 
-Next we have Data prep scripts which contain functions that convert annotations
-from various sources such as PASCAL-VOL, JSON, and symquant output into
-`pixelmaps`. These maps are simply binary, 2-dimensional `numpy ndarray`'s 
+Conceptually, Dataprep is just a plethora of helpful function we use 
+to simulate, train on, and transform data to accomplish the task of 
+spot detection.
+
+* the transformation of
+various file formats such as PASCAL-VOL, JSON, and symquant output into
+_pixelmaps_. These maps are simply binary, 2-dimensional `numpy ndarray`'s 
 which have 1's labeling synapses and 0's for background. 
-Given the medium of pixelmaps, we can do interesting things like 
-compute co-localization and 
 
 TODO: Give example 
 
 ## DeepLearning
 
-TODO
+The DeepLearning Directory currently contains the network 
+architecture, as well as script used for training / testing.
 
 ## tests
 
-This repository contains all nosetests which will be used to test ALL 
-functions implimented in this repository. To run the unit tests simply 
-type `python3 -m nose tests`
-
-## Data
-
-The data repository is split into 4 sub-directories. 
-
-* **Empirical** - Contains raw confocal images in `.bmp` format
-* **Annotation** - Contains raw annotation files from all methods such as clicking,
-synquant, and nueral network output.
-* **Prepped Empirical** - This is for empirical images which may have been manipulated 
-for neural network training input mostly.
-* **Prepped Annotation** - This is for pixelmaps to be used as targets for network
-training
+This repository contains all `nosetests` which will be used to test ALL 
+functions implemented in this repository. To run the unit tests, simply 
+type `python3 -m nose tests`.
