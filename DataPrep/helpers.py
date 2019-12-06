@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 from PIL import Image
 from skimage.draw import circle
 import cv2
-
+from mpl_toolkits.mplot3d import Axes3D
 from read_roi import read_roi_zip
 
 ##############################################################################
@@ -470,8 +470,54 @@ def simulate_single_layer(
     return sim_bump
 
 
+##############################################################################
 
+def tensor_to_3dmap(tensor, out = None):
+    """
+    A function which takes in a 2D numpy array and produces 
+    a heatmap.
 
+    if a filename is given to out then it will save the fig,
+    otherwise it will attempt to open the png with matplotlib.
+    """
 
+    X = np.arange(0, tensor.shape[0])
+    Y = np.arange(0, tensor.shape[1])
+    X, Y = np.meshgrid(X, Y)
+    fig = plt.figure()
+    ax = fig.gca(projection='3d')
+    surf = ax.plot_surface(X, Y, tensor, rstride=1, 
+        cstride=1, cmap='hot', linewidth=0, antialiased=False)
+    fig.colorbar(surf, shrink=0.5, aspect=5)
+    if out == None:
+        plt.show()
+    else:
+        plt.savefig(out)
 
+    return None
+
+##############################################################################
+
+def simple_simulator(num_samples, width, height, 
+        coloc_thresh, colocalization, noise):
+    """
+    A very non-complex simulator
+    """
+
+    x = np.zeros([num_samples, width, height, 3])
+    y = np.zeros([num_samples, width, height])
+    for i in range(num_samples):
+        X, Y = generate_simulated_microscopy_sample(
+            colocalization = colocalization,
+            width = width,
+            height = height,
+            coloc_thresh = 3)
+
+        add_normal_noise_to_image(X,0.2)
+        x[i] = X
+        y[i] = Y
+
+    y = np.reshape(y, [num_samples, width, height, 1])
+    
+    return x, y
 
