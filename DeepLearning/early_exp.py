@@ -25,7 +25,7 @@ from DataPrep.helpers  import *
 
 # Hard Dataset
 
-params = {"num_samples":100,
+params = {"num_samples":3500,
             "width":64,
             "height":64,
             "coloc_thresh":3,
@@ -57,7 +57,7 @@ print(model.summary())
 
 model.fit(train_x, train_y, 
         validation_data = (vali_x, vali_y),
-        epochs = 2)
+        epochs = 50)
 
 pred = model.predict(test_x)
 pred.dump("hard_y.out")

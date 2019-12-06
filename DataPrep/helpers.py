@@ -18,9 +18,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
 from skimage.draw import circle
-import cv2
+#import cv2
 from mpl_toolkits.mplot3d import Axes3D
-from read_roi import read_roi_zip
+#from read_roi import read_roi_zip
 
 ##############################################################################
 
