@@ -2,8 +2,8 @@
 #SBATCH --account=bgmp          ### SLURM account which will be charged for the job
 #SBATCH --partition=gpu        ### Partition (like a queue in PBS)
 #SBATCH --job-name=training      ### Job Name
-#SBATCH --output=train_spot.out         ### File in which to store job output
-#SBATCH --error=train_spot.err          ### File in which to store job error messages
+#SBATCH --output=./slurm_output/train_spot.out         ### File in which to store job output
+#SBATCH --error=./slurm_output/train_spot.err          ### File in which to store job error messages
 #SBATCH --time=0-00:10:00       ### Wall clock time limit in Days-HH:MM:SS
 #SBATCH --gres=gpu:1
 #SBATCH --nodes=1               ### Node count required for the job (usually 1)
@@ -18,4 +18,4 @@ ml python3
 ml cuda/9.0
 
 # SCRIPT 
-/usr/bin/time -v python3 $1
+/usr/bin/time -v python3 train_spot.py

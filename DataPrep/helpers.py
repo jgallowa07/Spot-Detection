@@ -324,7 +324,9 @@ def generate_simulated_microscopy_sample(
         width = 32,
         height = 32,
         radius = 2,
-        coloc_thresh = 3
+        coloc_thresh = 3,
+        s_noise = 0.2,
+        p_noise = 0.2,
         ):
     
     # TODO max radius size? make a radius vector for each layer of
@@ -396,7 +398,8 @@ def generate_simulated_microscopy_sample(
                 layers_list[3] += [(x,y)]
 
     channels = [simulate_single_layer(
-        layers_list[i], width, height, radius) for i in range(3)]
+        layers_list[i], width, height, radius,
+        s_noise = s_noise, p_noise = p_noise) for i in range(3)]
     simulated_sample = np.stack(channels,axis=2)    
     pixelmap_target = simulate_single_layer(
         layers_list[3], width, height, radius, is_pixelmap = True)
@@ -411,6 +414,8 @@ def simulate_single_layer(
         height,
         radius,
         is_pixelmap = False,
+        s_noise = 0.2,
+        p_noise = 0.2
         ):
     """
     This function will simulate a single layer given the coordinates for each 
@@ -451,7 +456,10 @@ def simulate_single_layer(
             activation = np.exp(-(diff_from_center**2))
        
             # we then add guassian noise the add another level of randomness 
-            activation_list[i] = activation + np.abs(np.random.normal(0,0.1))
+            activation_list[i] = activation + np.abs(np.random.normal(0,s_noise))
+            #print("s_noise",s_noise)
+            #assert(s_noise == 0.1)
+            #activation_list[i] = activation + np.abs(np.random.normal(0,0.1))
 
         # finally, population the tensor.
         sim_bump[xx,yy] += activation_list
@@ -464,7 +472,10 @@ def simulate_single_layer(
     if not is_pixelmap:
         sim_bump[sim_bump > 1] = 1
         num_ones = len(sim_bump[sim_bump == 1])
-        sim_bump[sim_bump == 1] += -1 * np.abs(np.random.normal(0,0.45,num_ones))
+        sim_bump[sim_bump == 1] += -1 * np.abs(np.random.normal(0,p_noise,num_ones))
+        #print("p_noise",p_noise)
+        #assert(p_noise == 0.45)
+        #sim_bump[sim_bump == 1] += -1 * np.abs(np.random.normal(0,0.45,num_ones))
     
     assert(len(sim_bump[sim_bump > 1]) == 0)
 
@@ -500,7 +511,10 @@ def tensor_to_3dmap(tensor, out = None):
 ###
 
 def simple_simulator(num_samples, width, height, 
-        coloc_thresh, colocalization, noise):
+        coloc_thresh, colocalization, 
+        s_noise = 0.2,
+        p_noise = 0.2,
+        b_noise = 0.2):
     """
     A very non-complex simulator
     """
@@ -512,9 +526,15 @@ def simple_simulator(num_samples, width, height,
             colocalization = colocalization,
             width = width,
             height = height,
-            coloc_thresh = coloc_thresh)
+            coloc_thresh = coloc_thresh,
+            s_noise = s_noise,
+            p_noise = p_noise)
 
-        add_normal_noise_to_image(X,0.2)
+        add_normal_noise_to_image(X,b_noise)
+        #print("b_noise", b_noise)
+        #assert(b_noise == 0.2)
+        #add_normal_noise_to_image(X,0.2)
+        
         x[i] = X
         y[i] = Y
 
