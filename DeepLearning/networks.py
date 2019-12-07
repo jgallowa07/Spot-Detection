@@ -37,6 +37,8 @@ def initial_CNN_map(x,y):
 
 def deeper_direct_CNN(x,y):
     """
+    # same as above but slightly deeper. 
+
     This function is in charge of taking in the testing and training data and
     returning a model object that we can use within train.py. This model will
     be creating a final map output where 1s are synapses and 0s are not.
