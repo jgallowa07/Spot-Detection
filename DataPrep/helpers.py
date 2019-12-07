@@ -8,7 +8,7 @@ This file contains all helpful python
 functions for scripts included in synapse detection.
 """
 
-##############################################################################
+###
 
 import os
 import sys
@@ -22,7 +22,7 @@ from skimage.draw import circle
 from mpl_toolkits.mplot3d import Axes3D
 #from read_roi import read_roi_zip
 
-##############################################################################
+###
 
 # UNDER CONSTRUCTION
 def dot_click_annoation_file_to_pixelmap(anno_file,
@@ -92,7 +92,7 @@ def dot_click_annoation_file_to_pixelmap(anno_file,
 
     return pixelmap
 
-##############################################################################
+###
 
 def synquant_to_pixelmap(filename):
     """
@@ -120,7 +120,7 @@ def synquant_to_pixelmap(filename):
 
     return map
 
-##############################################################################
+###
 
 def colocalization(pixelmap_list):
     """
@@ -174,7 +174,7 @@ def colocalization(pixelmap_list):
     
     return COLOCALIZED
 
-##############################################################################
+###
 
 def sub_patch_pixelmap(image_pixelmap, size=32, height=(256,1024), width=(256,768)):
     """
@@ -203,7 +203,7 @@ def sub_patch_pixelmap(image_pixelmap, size=32, height=(256,1024), width=(256,76
 
     return SUB_IMAGES
 
-##############################################################################
+###
 
 def empirical_prep(list_of_paths, size=32, height=(256,1024), width=(256,768)):
     """
@@ -249,7 +249,7 @@ def empirical_prep(list_of_paths, size=32, height=(256,1024), width=(256,768)):
 
     return sub_empirical
 
-##############################################################################
+###
 
 def f1_score(pixelmap1, pixelmap2):
     """
@@ -268,6 +268,7 @@ def f1_score(pixelmap1, pixelmap2):
     the model could be doing amd 1 being the best.
     """
     assert(pixelmap1.shape == pixelmap2.shape)
+    assert(pixelmap1.dtype == np.int and pixelmap2.dtype == np.int)
 
     true_positive = np.sum(np.bitwise_and(pixelmap1, pixelmap2))
     false_positive = np.sum(np.bitwise_and(pixelmap1, ~pixelmap2))
@@ -278,7 +279,7 @@ def f1_score(pixelmap1, pixelmap2):
 
     return 2/((1/precision) + (1/recall))
 
-##############################################################################
+###
 
 # TODO Impliment
 def generate_whole_dataset_stub():
@@ -288,7 +289,7 @@ def generate_whole_dataset_stub():
     """
     pass
 
-##############################################################################
+###
 
 # TODO This could obviously be made much more complex
 def add_normal_noise_to_image(image, gaussian_bg_sd, background_only = True):
@@ -316,7 +317,7 @@ def add_normal_noise_to_image(image, gaussian_bg_sd, background_only = True):
 
     
 
-##############################################################################
+###
 
 def generate_simulated_microscopy_sample(
         colocalization = [5] + [0 for _ in range(6)],
@@ -402,7 +403,7 @@ def generate_simulated_microscopy_sample(
 
     return simulated_sample, pixelmap_target
 
-##############################################################################
+###
 
 def simulate_single_layer(
         xy_list,
@@ -463,14 +464,14 @@ def simulate_single_layer(
     if not is_pixelmap:
         sim_bump[sim_bump > 1] = 1
         num_ones = len(sim_bump[sim_bump == 1])
-        sim_bump[sim_bump == 1] += -1 * np.abs(np.random.normal(0,0.25,num_ones))
+        sim_bump[sim_bump == 1] += -1 * np.abs(np.random.normal(0,0.45,num_ones))
     
     assert(len(sim_bump[sim_bump > 1]) == 0)
 
     return sim_bump
 
 
-##############################################################################
+###
 
 def tensor_to_3dmap(tensor, out = None):
     """
@@ -496,7 +497,7 @@ def tensor_to_3dmap(tensor, out = None):
 
     return None
 
-##############################################################################
+###
 
 def simple_simulator(num_samples, width, height, 
         coloc_thresh, colocalization, noise):
@@ -521,7 +522,7 @@ def simple_simulator(num_samples, width, height,
     
     return x, y
 
-##############################################################################
+###
 
 def f1_score_pixel_v_prob(prediction, target, threshold = 0.7):
     """
@@ -530,8 +531,17 @@ def f1_score_pixel_v_prob(prediction, target, threshold = 0.7):
 
     Pixels with probablility > threshold will be considered synapses
     """
-    
-    pass
+    assert(prediction.shape == target.shape)    
+
+    agg_fscore = np.zeros(prediction.shape[0])
+    for i in range(len(prediction)):
+        pred_pm = np.squeeze(prediction[:])
+        targ = np.squeeze(target[:])
+        pred_pm[pred_pm > threshold] = 1
+        pred_pm[pred_pm != 1] = 0
+        agg_fscore[i] = f1_score(pred_pm.astype(np.int), targ.astype(np.int))
+
+    return np.mean(agg_fscore)
 
 
 
