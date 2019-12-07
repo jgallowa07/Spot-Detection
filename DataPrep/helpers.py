@@ -473,9 +473,6 @@ def simulate_single_layer(
         sim_bump[sim_bump > 1] = 1
         num_ones = len(sim_bump[sim_bump == 1])
         sim_bump[sim_bump == 1] += -1 * np.abs(np.random.normal(0,p_noise,num_ones))
-        #print("p_noise",p_noise)
-        #assert(p_noise == 0.45)
-        #sim_bump[sim_bump == 1] += -1 * np.abs(np.random.normal(0,0.45,num_ones))
     
     assert(len(sim_bump[sim_bump > 1]) == 0)
 
@@ -531,9 +528,6 @@ def simple_simulator(num_samples, width, height,
             p_noise = p_noise)
 
         add_normal_noise_to_image(X,b_noise)
-        #print("b_noise", b_noise)
-        #assert(b_noise == 0.2)
-        #add_normal_noise_to_image(X,0.2)
         
         x[i] = X
         y[i] = Y
