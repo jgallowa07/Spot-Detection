@@ -463,7 +463,7 @@ def simulate_single_layer(
     if not is_pixelmap:
         sim_bump[sim_bump > 1] = 1
         num_ones = len(sim_bump[sim_bump == 1])
-        sim_bump[sim_bump == 1] += -1 * np.abs(np.random.normal(0,0.1,num_ones))
+        sim_bump[sim_bump == 1] += -1 * np.abs(np.random.normal(0,0.25,num_ones))
     
     assert(len(sim_bump[sim_bump > 1]) == 0)
 
@@ -511,7 +511,7 @@ def simple_simulator(num_samples, width, height,
             colocalization = colocalization,
             width = width,
             height = height,
-            coloc_thresh = 3)
+            coloc_thresh = coloc_thresh)
 
         add_normal_noise_to_image(X,0.2)
         x[i] = X
@@ -521,3 +521,19 @@ def simple_simulator(num_samples, width, height,
     
     return x, y
 
+##############################################################################
+
+def f1_score_pixel_v_prob(prediction, target, threshold = 0.7):
+    """
+    Take in a pixelmap target, and a probability map 
+    prediction from our network and return the f1 score. 
+
+    Pixels with probablility > threshold will be considered synapses
+    """
+    
+    pass
+
+
+
+
+    

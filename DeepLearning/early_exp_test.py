@@ -28,11 +28,17 @@ from DataPrep.helpers  import *
 params = {"num_samples":100,
             "width":64,
             "height":64,
-            "coloc_thresh":3,
+            "coloc_thresh":2,
             "colocalization":[1 for _ in range(7)],
             "noise":0.2}
 
 x, y = simple_simulator(**params)
+
+plt.imshow(x[0])
+plt.show()
+plt.imshow(np.squeeze(y[0]))
+plt.show()
+sys.exit()
 
 print(f"simulated data set x has shape: {x.shape}")
 print(f"simulated data set y has shape: {y.shape}")
