@@ -1,6 +1,8 @@
 ./Attic
 ./png
 
+Data/Simulated
+
 # ignore meta-data from vscode
 .vscode
 
