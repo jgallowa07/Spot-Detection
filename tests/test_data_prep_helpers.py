@@ -239,13 +239,14 @@ class TestHelpers(tests.testDataPrep):
             dot_radius = 2)
 
         # test colocalization with three pixelmaps
-        phil_output = colocalization([pixelmap1,pixelmap2,pixelmap3])
+        phil_output = colocalization([pixelmap1,pixelmap2,pixelmap3]).astype(np.int)
 
         # print(synquant_colocalization_map.shape)
         # print(phil_output.shape)
         # self.assertEqual(synquant_colocalization_map.shape,(1024,1024))
         # self.assertEqual(phil_output.shape,(1024,1024))
-        f1_output = f1_score(synquant_colocalization_map, phil_output)
+        # TODO - make sure phil_output and coloc output type np.int tensors
+        f1_output = f1_score(synquant_colocalization_map.astype(np.int), phil_output.astype(np.int))
         self.assertTrue(f1_output >= 0)
         self.assertTrue(f1_output <= 1)
 

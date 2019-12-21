@@ -18,9 +18,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
 from skimage.draw import circle
-#import cv2
 from mpl_toolkits.mplot3d import Axes3D
-#from read_roi import read_roi_zip
+import cv2
+from read_roi import read_roi_zip
 
 ###
 
@@ -453,7 +453,7 @@ def simulate_single_layer(
             # Question, How dow we make this bump wider, @ Annie
             # I would like for the majority of the numbers not to 
             # be so small :)
-            activation = np.exp(-(diff_from_center**2))
+            activation = np.exp(-((0.5*diff_from_center)**2))
        
             # we then add guassian noise the add another level of randomness 
             activation_list[i] = activation + np.abs(np.random.normal(0,s_noise))
@@ -478,10 +478,9 @@ def simulate_single_layer(
 
     return sim_bump
 
-
 ###
 
-def tensor_to_3dmap(tensor, out = None):
+def tensor_to_3dmap(tensor, out = None, cmap = "bone"):
     """
     A function which takes in a 2D numpy array and produces 
     a heatmap.
@@ -496,7 +495,7 @@ def tensor_to_3dmap(tensor, out = None):
     fig = plt.figure()
     ax = fig.gca(projection='3d')
     surf = ax.plot_surface(X, Y, tensor, rstride=1, 
-        cstride=1, cmap='hot', linewidth=0, antialiased=False)
+        cstride=1, cmap=cmap, linewidth=0, antialiased=False)
     fig.colorbar(surf, shrink=0.5, aspect=5)
     if out == None:
         plt.show()
@@ -507,8 +506,34 @@ def tensor_to_3dmap(tensor, out = None):
 
 ###
 
+#def tensor_to_3dmap(tensor, out = None, cmap = "bone"):
+#    """
+#    A function which takes in a 2D numpy array and produces 
+#    a heatmap.
+#
+#    if a filename is given to out then it will save the fig,
+#    otherwise it will attempt to open the png with matplotlib.
+#    """
+#
+#    X = np.arange(0, tensor.shape[0])
+#    Y = np.arange(0, tensor.shape[1])
+#    X, Y = np.meshgrid(X, Y)
+#    fig = plt.figure()
+#    ax = fig.gca(projection='3d')
+#    surf = ax.plot_surface(X, Y, tensor, rstride=1, 
+#        cstride=1, cmap=cmap, linewidth=0, antialiased=False)
+#    fig.colorbar(surf, shrink=0.5, aspect=5)
+#    if out == None:
+#        plt.show()
+#    else:
+#        plt.savefig(out)
+#
+#    return None
+#
+###
+
 def simple_simulator(num_samples, width, height, 
-        coloc_thresh, colocalization, 
+        coloc_thresh, colocalization, radius = 2,
         s_noise = 0.2,
         p_noise = 0.2,
         b_noise = 0.2):
@@ -523,6 +548,7 @@ def simple_simulator(num_samples, width, height,
             colocalization = colocalization,
             width = width,
             height = height,
+            radius = radius,
             coloc_thresh = coloc_thresh,
             s_noise = s_noise,
             p_noise = p_noise)
