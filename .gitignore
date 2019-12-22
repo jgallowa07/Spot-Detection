@@ -2,6 +2,8 @@
 ./png
 
 Data/Simulated
+tests/sandbox_nick.py
+tests/output/
 
 # ignore meta-data from vscode
 .vscode
