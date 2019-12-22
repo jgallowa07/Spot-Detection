@@ -8,7 +8,7 @@ This file contains all helpful python
 functions for scripts included in synapse detection.
 """
 
-##############################################################################
+###
 
 import os
 import sys
@@ -18,11 +18,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
 from skimage.draw import circle
+from mpl_toolkits.mplot3d import Axes3D
 import cv2
-
 from read_roi import read_roi_zip
 
-##############################################################################
+###
 
 # UNDER CONSTRUCTION
 def dot_click_annoation_file_to_pixelmap(anno_file,
@@ -92,7 +92,7 @@ def dot_click_annoation_file_to_pixelmap(anno_file,
 
     return pixelmap
 
-##############################################################################
+###
 
 def synquant_to_pixelmap(filename):
     """
@@ -120,7 +120,7 @@ def synquant_to_pixelmap(filename):
 
     return map
 
-##############################################################################
+###
 
 def colocalization(pixelmap_list):
     """
@@ -174,7 +174,7 @@ def colocalization(pixelmap_list):
     
     return COLOCALIZED
 
-##############################################################################
+###
 
 def sub_patch_pixelmap(image_pixelmap, size=32, height=(256,1024), width=(256,768)):
     """
@@ -203,7 +203,7 @@ def sub_patch_pixelmap(image_pixelmap, size=32, height=(256,1024), width=(256,76
 
     return SUB_IMAGES
 
-##############################################################################
+###
 
 def empirical_prep(list_of_paths, size=32, height=(256,1024), width=(256,768)):
     """
@@ -249,7 +249,7 @@ def empirical_prep(list_of_paths, size=32, height=(256,1024), width=(256,768)):
 
     return sub_empirical
 
-##############################################################################
+###
 
 def f1_score(pixelmap1, pixelmap2):
     """
@@ -268,6 +268,7 @@ def f1_score(pixelmap1, pixelmap2):
     the model could be doing amd 1 being the best.
     """
     assert(pixelmap1.shape == pixelmap2.shape)
+    assert(pixelmap1.dtype == np.int and pixelmap2.dtype == np.int)
 
     true_positive = np.sum(np.bitwise_and(pixelmap1, pixelmap2))
     false_positive = np.sum(np.bitwise_and(pixelmap1, ~pixelmap2))
@@ -278,7 +279,7 @@ def f1_score(pixelmap1, pixelmap2):
 
     return 2/((1/precision) + (1/recall))
 
-##############################################################################
+###
 
 # TODO Impliment
 def generate_whole_dataset_stub():
@@ -288,7 +289,7 @@ def generate_whole_dataset_stub():
     """
     pass
 
-##############################################################################
+###
 
 # TODO This could obviously be made much more complex
 def add_normal_noise_to_image(image, gaussian_bg_sd, background_only = True):
@@ -316,14 +317,16 @@ def add_normal_noise_to_image(image, gaussian_bg_sd, background_only = True):
 
     
 
-##############################################################################
+###
 
 def generate_simulated_microscopy_sample(
         colocalization = [5] + [0 for _ in range(6)],
         width = 32,
         height = 32,
         radius = 2,
-        coloc_thresh = 3
+        coloc_thresh = 3,
+        s_noise = 0.2,
+        p_noise = 0.2,
         ):
     
     # TODO max radius size? make a radius vector for each layer of
@@ -395,14 +398,15 @@ def generate_simulated_microscopy_sample(
                 layers_list[3] += [(x,y)]
 
     channels = [simulate_single_layer(
-        layers_list[i], width, height, radius) for i in range(3)]
+        layers_list[i], width, height, radius,
+        s_noise = s_noise, p_noise = p_noise) for i in range(3)]
     simulated_sample = np.stack(channels,axis=2)    
     pixelmap_target = simulate_single_layer(
         layers_list[3], width, height, radius, is_pixelmap = True)
 
     return simulated_sample, pixelmap_target
 
-##############################################################################
+###
 
 def simulate_single_layer(
         xy_list,
@@ -410,6 +414,8 @@ def simulate_single_layer(
         height,
         radius,
         is_pixelmap = False,
+        s_noise = 0.2,
+        p_noise = 0.2
         ):
     """
     This function will simulate a single layer given the coordinates for each 
@@ -447,10 +453,13 @@ def simulate_single_layer(
             # Question, How dow we make this bump wider, @ Annie
             # I would like for the majority of the numbers not to 
             # be so small :)
-            activation = np.exp(-(diff_from_center**2))
+            activation = np.exp(-((0.5*diff_from_center)**2))
        
             # we then add guassian noise the add another level of randomness 
-            activation_list[i] = activation + np.abs(np.random.normal(0,0.1))
+            activation_list[i] = activation + np.abs(np.random.normal(0,s_noise))
+            #print("s_noise",s_noise)
+            #assert(s_noise == 0.1)
+            #activation_list[i] = activation + np.abs(np.random.normal(0,0.1))
 
         # finally, population the tensor.
         sim_bump[xx,yy] += activation_list
@@ -463,15 +472,118 @@ def simulate_single_layer(
     if not is_pixelmap:
         sim_bump[sim_bump > 1] = 1
         num_ones = len(sim_bump[sim_bump == 1])
-        sim_bump[sim_bump == 1] += -1 * np.abs(np.random.normal(0,0.1,num_ones))
+        sim_bump[sim_bump == 1] += -1 * np.abs(np.random.normal(0,p_noise,num_ones))
     
     assert(len(sim_bump[sim_bump > 1]) == 0)
 
     return sim_bump
 
+###
+
+def tensor_to_3dmap(tensor, out = None, cmap = "bone"):
+    """
+    A function which takes in a 2D numpy array and produces 
+    a heatmap.
+
+    if a filename is given to out then it will save the fig,
+    otherwise it will attempt to open the png with matplotlib.
+    """
+
+    X = np.arange(0, tensor.shape[0])
+    Y = np.arange(0, tensor.shape[1])
+    X, Y = np.meshgrid(X, Y)
+    fig = plt.figure()
+    ax = fig.gca(projection='3d')
+    surf = ax.plot_surface(X, Y, tensor, rstride=1, 
+        cstride=1, cmap=cmap, linewidth=0, antialiased=False)
+    fig.colorbar(surf, shrink=0.5, aspect=5)
+    if out == None:
+        plt.show()
+    else:
+        plt.savefig(out)
+
+    return None
+
+###
+
+#def tensor_to_3dmap(tensor, out = None, cmap = "bone"):
+#    """
+#    A function which takes in a 2D numpy array and produces 
+#    a heatmap.
+#
+#    if a filename is given to out then it will save the fig,
+#    otherwise it will attempt to open the png with matplotlib.
+#    """
+#
+#    X = np.arange(0, tensor.shape[0])
+#    Y = np.arange(0, tensor.shape[1])
+#    X, Y = np.meshgrid(X, Y)
+#    fig = plt.figure()
+#    ax = fig.gca(projection='3d')
+#    surf = ax.plot_surface(X, Y, tensor, rstride=1, 
+#        cstride=1, cmap=cmap, linewidth=0, antialiased=False)
+#    fig.colorbar(surf, shrink=0.5, aspect=5)
+#    if out == None:
+#        plt.show()
+#    else:
+#        plt.savefig(out)
+#
+#    return None
+#
+###
+
+def simple_simulator(num_samples, width, height, 
+        coloc_thresh, colocalization, radius = 2,
+        s_noise = 0.2,
+        p_noise = 0.2,
+        b_noise = 0.2):
+    """
+    A very non-complex simulator
+    """
+
+    x = np.zeros([num_samples, width, height, 3])
+    y = np.zeros([num_samples, width, height])
+    for i in range(num_samples):
+        X, Y = generate_simulated_microscopy_sample(
+            colocalization = colocalization,
+            width = width,
+            height = height,
+            radius = radius,
+            coloc_thresh = coloc_thresh,
+            s_noise = s_noise,
+            p_noise = p_noise)
+
+        add_normal_noise_to_image(X,b_noise)
+        
+        x[i] = X
+        y[i] = Y
+
+    y = np.reshape(y, [num_samples, width, height, 1])
+    
+    return x, y
+
+###
+
+def f1_score_pixel_v_prob(prediction, target, threshold = 0.7):
+    """
+    Take in a pixelmap target, and a probability map 
+    prediction from our network and return the f1 score. 
+
+    Pixels with probablility > threshold will be considered synapses
+    """
+    assert(prediction.shape == target.shape)    
+
+    agg_fscore = np.zeros(prediction.shape[0])
+    for i in range(len(prediction)):
+        pred_pm = np.squeeze(prediction[:])
+        targ = np.squeeze(target[:])
+        pred_pm[pred_pm > threshold] = 1
+        pred_pm[pred_pm != 1] = 0
+        agg_fscore[i] = f1_score(pred_pm.astype(np.int), targ.astype(np.int))
+
+    return np.mean(agg_fscore)
 
 
 
 
-
-
+    
