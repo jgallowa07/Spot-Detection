@@ -2,6 +2,7 @@
 ./png
 
 Data/Simulated
+*.DS_Store
 tests/sandbox_nick.py
 tests/output/
 
