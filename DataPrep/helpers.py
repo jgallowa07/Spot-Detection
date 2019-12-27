@@ -94,27 +94,48 @@ def dot_click_annoation_file_to_pixelmap(anno_file,
 
 ###
 
-def synquant_to_pixelmap(filename):
+def synquant_to_pixelmap(filename, size = 1024):
     """
-    TODO: comment
-    
     This function should take in the output from SynQuant
     https://www.biorxiv.org/content/10.1101/538769v1
     and convert it to a pixelmap 
 
-        
+    Utilizes a package called read_roi to load in the JSON file 
+    that is output from SynQuant
+
+    :param: filename <string> - path to the desired SynQuant output
+        file to be read in and converted to a pixelmap
+
+    :param: size <int> - value to define the SIZExSIZE area that was
+        fed into the synquant program
+
+    :return: map <numpy array> - returns a SIZExSIZE numpy array that 
+        has 1s in all of the pixel (x,y) locations that came from the
+        output of SynQuant. 0s everywhere else.
     """
 
-    
+    # read in the JSON style SynQuant output file into roi variable
     roi = read_roi_zip(filename)
+
+    # initialize blank lists for the x and y coordinates that come from
+    # the SynQuant output
     xcoord=[]
     ycoord=[]
+
+    # loop that goes through all of the synquant output and pulls out the 
+    # x and y coordinates and stores them in the respective lists
     for i in roi.keys():
         xcoord=np.append(xcoord,(roi[i]['x']))
         ycoord=np.append(ycoord,roi[i]['y'])
+    # convert lists to integer values
     xcoord=xcoord.astype(int)
     ycoord=ycoord.astype(int)
-    map = np.zeros((1024,1024),dtype=int)
+
+    # initialize SIZExSIZE numpy array of all zeros 
+    map = np.zeros((size,size),dtype=int)
+
+    # loop through the length of the coordinate lists and add each combination
+    # of x and y values to map numpy array
     for i in range(len(xcoord)):
         map[xcoord[i]-1,ycoord[i]-1]+=1
 
