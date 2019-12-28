@@ -463,7 +463,7 @@ def simulate_single_layer(
     :param: p_noise <float> - 
 
     
-    :return: sim_bump <numpy array> - numpy array representing one fully simulated
+    :return: sim_bump <ndarray> - numpy array representing one fully simulated
         layer.
     """    
     
@@ -659,10 +659,29 @@ def f1_score_pixel_v_prob(prediction, target, threshold = 0.7):
     prediction from our network and return the f1 score. 
 
     Pixels with probablility > threshold will be considered synapses
+
+    :param: prediction <ndarray> - probability map that is the output
+        from our model
+
+    :param: target <ndarray> - pixelmap target that shows the exact
+        locations of where the synapses should have been predicted
+
+    :param: threshold <float> - value that represents the prediction
+        probability that has to be given in order for it to
+        actually be considered a correct guess
+
+    :return: np.mean(agg_fscore) <float> - the mean value of all of the
+        f1_scores when comparing the prediction to the target
     """
     assert(prediction.shape == target.shape)    
 
+    # initialize numpy array with zeros to the size of th
     agg_fscore = np.zeros(prediction.shape[0])
+
+    # loops the amount of times as the length of the first dimension
+    # calculates an f1_score for each loop by setting the prediction
+    # values to 1 if they are above the threshold and 0 otherwise
+    # then utilizing the f1_score method
     for i in range(len(prediction)):
         pred_pm = np.squeeze(prediction[:])
         targ = np.squeeze(target[:])
@@ -670,6 +689,7 @@ def f1_score_pixel_v_prob(prediction, target, threshold = 0.7):
         pred_pm[pred_pm != 1] = 0
         agg_fscore[i] = f1_score(pred_pm.astype(np.int), targ.astype(np.int))
 
+    # return the mean of all of these f1_score calculations
     return np.mean(agg_fscore)
 
 
