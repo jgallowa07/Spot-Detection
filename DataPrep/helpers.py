@@ -501,7 +501,7 @@ def simulate_single_layer(
             # TODO: Did we ever get this resolved?
             activation = np.exp(-((0.5*diff_from_center)**2))
        
-            # we then add guassian noise the add another level of randomness 
+            # we then add gaussian noise the add another level of randomness 
             activation_list[i] = activation + np.abs(np.random.normal(0,s_noise))
             #print("s_noise",s_noise)
             #assert(s_noise == 0.1)
@@ -584,11 +584,50 @@ def simple_simulator(num_samples, width, height,
         p_noise = 0.2,
         b_noise = 0.2):
     """
-    A very non-complex simulator
+    This function allows for a very non-complex way to generate a 
+    dataset of simulated example and target images.
+
+    :param: num_samples <int> - number of samples to generate
+            
+    :param: width <int> - width of the sample
+    
+    :param: height <int> - height of the sample
+
+    :param: coloc_thresh <int> - One of [1,2,3], which is the number of 
+        images with the same dot needed to colocalize to the final x and y
+    
+    :param: colocalization <list> - a list which contains the 7 colocal counts.
+        the params should be in the following order:
+            idx - colocal meaning
+            0 - all_layers share. as well as the pixelmap
+            1 - just the 0, and 1 share
+            2 - just the 1 and 2 share
+            3 - just the 0 and 2 share
+            4 - just 0
+            5 - just 1
+            6 - just 2
+
+    :param: radius <int> - radius of bumps
+
+    :param: s_noise <float> - 
+
+    :param: p_noise <float> -
+
+    :param: b_noise <float> -
+
+    :return: [x:4D numpy tensor, y:4D numpy tensor] - 
+            x: simulated sample images  
+            y: simulated target pixelmaps
     """
 
+    # initialize x and y as numpy arrays of all zeros to be the placeholders of 
+    # images to be simulated
     x = np.zeros([num_samples, width, height, 3])
     y = np.zeros([num_samples, width, height])
+
+    # loop through and call the generate_simulated_microscopy_sample function
+    # the amount of times as the desired number of samples. The same parameters
+    # are used for each call
     for i in range(num_samples):
         X, Y = generate_simulated_microscopy_sample(
             colocalization = colocalization,
@@ -599,11 +638,15 @@ def simple_simulator(num_samples, width, height,
             s_noise = s_noise,
             p_noise = p_noise)
 
+        # add normal noise to the example image based on the level of
+        # b_noise desired
         add_normal_noise_to_image(X,b_noise)
         
+        # add each x and y to our already initialized placeholder lists
         x[i] = X
         y[i] = Y
 
+    # reshape the final target list to be 4 dimensional
     y = np.reshape(y, [num_samples, width, height, 1])
     
     return x, y
