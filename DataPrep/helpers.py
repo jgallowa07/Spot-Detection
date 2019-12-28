@@ -440,7 +440,31 @@ def simulate_single_layer(
         ):
     """
     This function will simulate a single layer given the coordinates for each 
-    exponential bump!
+    exponential bump! This function is utilized by the generate_simulated_microscopy_sample
+    function so that it can generate multiple layers and combine them to create 
+    the desired example image, or just a pixelmap for the simulated target.
+
+    :param: xy_list <list> - list that contains sets of x and y locations (x,y)
+        that will the locations for the bumps (synapses) in this particular
+        layer
+
+    :param: width <int> - width of the sample 
+    
+    :param: height <int> - height of the sample
+    
+    :param: radius <int> - radius of bumps
+    
+    :param: is_pixelmap <boolean> - boolean to specify whether or not the layer
+        being created is going to be one of three layers for an example image or
+        a pixelmap representing the target for the simulation
+
+    :param: s_noise <float> - 
+
+    :param: p_noise <float> - 
+
+    
+    :return: sim_bump <numpy array> - numpy array representing one fully simulated
+        layer.
     """    
     
 
@@ -474,6 +498,7 @@ def simulate_single_layer(
             # Question, How dow we make this bump wider, @ Annie
             # I would like for the majority of the numbers not to 
             # be so small :)
+            # TODO: Did we ever get this resolved?
             activation = np.exp(-((0.5*diff_from_center)**2))
        
             # we then add guassian noise the add another level of randomness 
