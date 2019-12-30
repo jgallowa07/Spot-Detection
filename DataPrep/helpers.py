@@ -52,8 +52,8 @@ def dot_click_annoation_file_to_pixelmap(anno_file,
     L1-D01-g.bmp,595,284,603,292,synapse
 
     :return: pixelmap <ndarray> - the function will return a 2-dimentional binary 
-    numpy ndarray object with the shape (width,height). 1's represent annotated 
-    images
+        numpy ndarray object with the shape (width,height). 1's represent annotated 
+        images
     """
 
     # initialize a pixelmap
@@ -150,16 +150,17 @@ def colocalization(pixelmap_list):
     This function takes in a list of pixelmaps and performs bitwise operations 
     to find the spots that have pixels in common (colocalization)
 
-
     This function is dependent on the length of the pixelmap_list. If the length is
     just two then it will compute the bitwise-AND, and find the spots of colocalization
     for those two images. If the length is three then it will find all three sets of 
     image colocalization and bitwise-OR those together.
 
+    :param: pixelmap_list <list> - list of paths to pixelmaps in which colocalization
+        is desired to be computed between
 
-    This function will return a 2-dimentional binary numpy ndarray object 
-    with the shape (1024,1024). 1's represent any point of colocalization between the
-    images.
+    :return: COLOCALIZED <ndarray> - This function will return a 2-dimentional binary 
+    numpy ndarray object with the shape (1024,1024). 1's represent any point of 
+    colocalization between the images.
     """
     pixelmap_list = np.array(pixelmap_list)
 
