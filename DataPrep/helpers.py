@@ -34,13 +34,15 @@ def dot_click_annoation_file_to_pixelmap(anno_file,
     row format: filepath, top x, top y, bottom x, bottom y. no header.
     
     
+    :param: anno_file <string>  - path to annotation file
 
-    width, and height represent the total size of the annotated image.
-    dot_radius is the size the of the circle centered around a clicked 
-    synapse. 
+    :param: width <int> - width of the sample 
+    
+    :param: height <int> - height of the sample
+    
+    :param: dot_radius <int> - radius of bumps
  
-    EX INPUT
-
+    EX Data in file:
     L1-D01-g.bmp,583,247,591,255,synapse
     L1-D01-g.bmp,589,256,597,264,synapse
     L1-D01-g.bmp,559,269,567,277,synapse
@@ -49,9 +51,9 @@ def dot_click_annoation_file_to_pixelmap(anno_file,
     L1-D01-g.bmp,607,281,615,289,synapse
     L1-D01-g.bmp,595,284,603,292,synapse
 
-    the function will return a 2-dimentional binary numpy ndarray object 
-    with the shape (width,height). 1's represent annotated images 
-    
+    :return: pixelmap <ndarray> - the function will return a 2-dimentional binary 
+        numpy ndarray object with the shape (width,height). 1's represent annotated 
+        images
     """
 
     # initialize a pixelmap
@@ -94,27 +96,48 @@ def dot_click_annoation_file_to_pixelmap(anno_file,
 
 ###
 
-def synquant_to_pixelmap(filename):
+def synquant_to_pixelmap(filename, size = 1024):
     """
-    TODO: comment
-    
     This function should take in the output from SynQuant
     https://www.biorxiv.org/content/10.1101/538769v1
     and convert it to a pixelmap 
 
-        
+    Utilizes a package called read_roi to load in the JSON file 
+    that is output from SynQuant
+
+    :param: filename <string> - path to the desired SynQuant output
+        file to be read in and converted to a pixelmap
+
+    :param: size <int> - value to define the SIZExSIZE area that was
+        fed into the synquant program
+
+    :return: map <numpy array> - returns a SIZExSIZE numpy array that 
+        has 1s in all of the pixel (x,y) locations that came from the
+        output of SynQuant. 0s everywhere else.
     """
 
-    
+    # read in the JSON style SynQuant output file into roi variable
     roi = read_roi_zip(filename)
+
+    # initialize blank lists for the x and y coordinates that come from
+    # the SynQuant output
     xcoord=[]
     ycoord=[]
+
+    # loop that goes through all of the synquant output and pulls out the 
+    # x and y coordinates and stores them in the respective lists
     for i in roi.keys():
         xcoord=np.append(xcoord,(roi[i]['x']))
         ycoord=np.append(ycoord,roi[i]['y'])
+    # convert lists to integer values
     xcoord=xcoord.astype(int)
     ycoord=ycoord.astype(int)
-    map = np.zeros((1024,1024),dtype=int)
+
+    # initialize SIZExSIZE numpy array of all zeros 
+    map = np.zeros((size,size),dtype=int)
+
+    # loop through the length of the coordinate lists and add each combination
+    # of x and y values to map numpy array
     for i in range(len(xcoord)):
         map[xcoord[i]-1,ycoord[i]-1]+=1
 
@@ -127,16 +150,17 @@ def colocalization(pixelmap_list):
     This function takes in a list of pixelmaps and performs bitwise operations 
     to find the spots that have pixels in common (colocalization)
 
-
     This function is dependent on the length of the pixelmap_list. If the length is
     just two then it will compute the bitwise-AND, and find the spots of colocalization
     for those two images. If the length is three then it will find all three sets of 
     image colocalization and bitwise-OR those together.
 
+    :param: pixelmap_list <list> - list of paths to pixelmaps in which colocalization
+        is desired to be computed between
 
-    This function will return a 2-dimentional binary numpy ndarray object 
-    with the shape (1024,1024). 1's represent any point of colocalization between the
-    images.
+    :return: COLOCALIZED <ndarray> - This function will return a 2-dimentional binary 
+    numpy ndarray object with the shape (1024,1024). 1's represent any point of 
+    colocalization between the images.
     """
     pixelmap_list = np.array(pixelmap_list)
 
@@ -182,14 +206,19 @@ def sub_patch_pixelmap(image_pixelmap, size=32, height=(256,1024), width=(256,76
     user can specify the area they would like to sub-patch as well as the size of
     the patch they would like to grab.
 
-    image_pixelmap: numpy 2d array corresponding to the pixelmap to be sub-patched
-    size: the SIZExSIZE chunk to be grabbed
-    height: tuple specifying the y start and stop positions (start, stop)  
+    :param: image_pixelmap <ndarray> - numpy 2d array corresponding to the pixelmap 
+        to be sub-patched
+
+    :param: size <int> - the SIZExSIZE chunk to be grabbed
+
+    :param: height <tuple> - tuple specifying the y start and stop positions (start, stop)  
             DEFAULT: (256,1024)
-    width: tuple specifying the x start and stop positions (start, stop)  
+
+    :param: width <tuple> - tuple specifying the x start and stop positions (start, stop)  
             DEFAULT: (256,768)
     
-    This function will return a numpy ndarray of SIZExSIZE 2-dimentional binary numpy ndarrays
+    :return: SUB_IMAGES <ndarray> - This function will return a numpy ndarray of 
+        SIZExSIZE 2-dimentional binary numpy ndarrays
     """
 
     SUB_IMAGES = []    # initialize an array for holding the sub images
@@ -212,32 +241,48 @@ def empirical_prep(list_of_paths, size=32, height=(256,1024), width=(256,768)):
     the list_of_paths parameter. The user can specify the area they would like to sub-image 
     as well as the size of the chunk they would like to grab.
 
-    list_of_paths: list of strings corresponding to the paths of the images wanting to be
-                sub-imaged
-    size: the SIZExSIZE chunk to be grabbed
-    height: tuple specifying the y start and stop positions (start, stop)  
+    :param: list_of_paths <list> - list of strings corresponding to the paths of 
+        the images wanting to be sub-imaged
+
+    :param: size <int> - the SIZExSIZE chunk to be grabbed
+
+    :param: height <tuple> - tuple specifying the y start and stop positions (start, stop)  
             DEFAULT: (256,1024)
-    width: tuple specifying the x start and stop positions (start, stop)  
+
+    :param: width <tuple> - tuple specifying the x start and stop positions (start, stop)  
             DEFAULT: (256,768)
 
-    This function will return a list of numpy ndarrays, of which contain all of the sub-images
-    for that given empirical image. There will be one item in the list for each empirical 
-    image given
+    :return: sub_empirical <ndarray> -This function will return a 4D numpy ndarray, of 
+        which contain all of the sub-images for that given empirical image. There will be 
+        one item in the list for each empirical image given
     """
 
     sub_empirical = []
+
+    # loop through length of list_of_paths
     for num in range(len(list_of_paths)):
+
+        # using pillow .crop function to sub-patch within the image
         pillow_opened_image = Image.open(list_of_paths[num])
         temp_sub_images = []
-        for i in range(height[0],height[1],size):  # this for loop isolates only the region of the image specified in the parameters
+
+        # crops SIZExSIZE chunks from the image and appends them as numpy arrays
+        # to sub_empirical list
+        # this for loop isolates only the region of the image specified in the 
+        # parameters
+        for i in range(height[0],height[1],size):  
             for j in range(width[0],width[1],size):
-                temp_pic = pillow_opened_image.crop((i,j,i+size,j+size)) # grabbing SIZExSIZE chunks and storing them in an array
-                # 7
+                # grabbing SIZExSIZE chunks and storing them in an array
+                temp_pic = pillow_opened_image.crop((i,j,i+size,j+size)) 
                 temp_pic = np.array(temp_pic)[:,:,0]
                 temp_sub_images.append(temp_pic)
+        
+        # for each item in list_of_paths save the temp images as one of the
+        # dimensions of the sub_empirical list
         temp_sub_images = np.array(temp_sub_images)
         sub_empirical.append(temp_sub_images)
     
+    # turn list into numpy ndarray
     sub_empirical = np.array(sub_empirical)
     
     # here, we are re-arranging the axes so 
@@ -260,20 +305,23 @@ def f1_score(pixelmap1, pixelmap2):
     precision = true positive / (true positive + false positiv)
     recall = true positive / (true positive + false negative)
 
+    :param: pixelmap1, pixelmap2 <ndarray> - two pixelmaps of the same 
+        size which we would like to evaluate and get a metric of how they compare
 
-    pixelmap1, pixelmap2: two pixelmaps of the same size which we would like
-    to evaluate and get a metric of how they compare
-
-    This function will return a float value between 0 and 1. 0 being the worst
-    the model could be doing amd 1 being the best.
+    :return: 2/((1/precision) + (1/recall)) <float> - This function will return 
+        a float value between 0 and 1. 0 being the worst the model could be doing 
+        and 1 being the best.
     """
     assert(pixelmap1.shape == pixelmap2.shape)
     assert(pixelmap1.dtype == np.int and pixelmap2.dtype == np.int)
 
+    # sum the number of 1s in each of the three combinations 
+    # to be able to calculate the two metrics
     true_positive = np.sum(np.bitwise_and(pixelmap1, pixelmap2))
     false_positive = np.sum(np.bitwise_and(pixelmap1, ~pixelmap2))
     false_negative = np.sum(np.bitwise_and(~pixelmap1, pixelmap2))
 
+    # calculate the two metrics described above
     precision = true_positive / (true_positive + false_positive)
     recall = true_positive / (true_positive + false_negative)
 
@@ -419,7 +467,31 @@ def simulate_single_layer(
         ):
     """
     This function will simulate a single layer given the coordinates for each 
-    exponential bump!
+    exponential bump! This function is utilized by the generate_simulated_microscopy_sample
+    function so that it can generate multiple layers and combine them to create 
+    the desired example image, or just a pixelmap for the simulated target.
+
+    :param: xy_list <list> - list that contains sets of x and y locations (x,y)
+        that will the locations for the bumps (synapses) in this particular
+        layer
+
+    :param: width <int> - width of the sample 
+    
+    :param: height <int> - height of the sample
+    
+    :param: radius <int> - radius of bumps
+    
+    :param: is_pixelmap <boolean> - boolean to specify whether or not the layer
+        being created is going to be one of three layers for an example image or
+        a pixelmap representing the target for the simulation
+
+    :param: s_noise <float> - 
+
+    :param: p_noise <float> - 
+
+    
+    :return: sim_bump <ndarray> - numpy array representing one fully simulated
+        layer.
     """    
     
 
@@ -453,9 +525,10 @@ def simulate_single_layer(
             # Question, How dow we make this bump wider, @ Annie
             # I would like for the majority of the numbers not to 
             # be so small :)
+            # TODO: Did we ever get this resolved?
             activation = np.exp(-((0.5*diff_from_center)**2))
        
-            # we then add guassian noise the add another level of randomness 
+            # we then add gaussian noise the add another level of randomness 
             activation_list[i] = activation + np.abs(np.random.normal(0,s_noise))
             #print("s_noise",s_noise)
             #assert(s_noise == 0.1)
@@ -506,43 +579,56 @@ def tensor_to_3dmap(tensor, out = None, cmap = "bone"):
 
 ###
 
-#def tensor_to_3dmap(tensor, out = None, cmap = "bone"):
-#    """
-#    A function which takes in a 2D numpy array and produces 
-#    a heatmap.
-#
-#    if a filename is given to out then it will save the fig,
-#    otherwise it will attempt to open the png with matplotlib.
-#    """
-#
-#    X = np.arange(0, tensor.shape[0])
-#    Y = np.arange(0, tensor.shape[1])
-#    X, Y = np.meshgrid(X, Y)
-#    fig = plt.figure()
-#    ax = fig.gca(projection='3d')
-#    surf = ax.plot_surface(X, Y, tensor, rstride=1, 
-#        cstride=1, cmap=cmap, linewidth=0, antialiased=False)
-#    fig.colorbar(surf, shrink=0.5, aspect=5)
-#    if out == None:
-#        plt.show()
-#    else:
-#        plt.savefig(out)
-#
-#    return None
-#
-###
-
 def simple_simulator(num_samples, width, height, 
         coloc_thresh, colocalization, radius = 2,
         s_noise = 0.2,
         p_noise = 0.2,
         b_noise = 0.2):
     """
-    A very non-complex simulator
+    This function allows for a very non-complex way to generate a 
+    dataset of simulated example and target images.
+
+    :param: num_samples <int> - number of samples to generate
+            
+    :param: width <int> - width of the sample
+    
+    :param: height <int> - height of the sample
+
+    :param: coloc_thresh <int> - One of [1,2,3], which is the number of 
+        images with the same dot needed to colocalize to the final x and y
+    
+    :param: colocalization <list> - a list which contains the 7 colocal counts.
+        the params should be in the following order:
+            idx - colocal meaning
+            0 - all_layers share. as well as the pixelmap
+            1 - just the 0, and 1 share
+            2 - just the 1 and 2 share
+            3 - just the 0 and 2 share
+            4 - just 0
+            5 - just 1
+            6 - just 2
+
+    :param: radius <int> - radius of bumps
+
+    :param: s_noise <float> - 
+
+    :param: p_noise <float> -
+
+    :param: b_noise <float> -
+
+    :return: [x:4D numpy tensor, y:4D numpy tensor] - 
+            x: simulated sample images  
+            y: simulated target pixelmaps
     """
 
+    # initialize x and y as numpy arrays of all zeros to be the placeholders of 
+    # images to be simulated
     x = np.zeros([num_samples, width, height, 3])
     y = np.zeros([num_samples, width, height])
+
+    # loop through and call the generate_simulated_microscopy_sample function
+    # the amount of times as the desired number of samples. The same parameters
+    # are used for each call
     for i in range(num_samples):
         X, Y = generate_simulated_microscopy_sample(
             colocalization = colocalization,
@@ -553,11 +639,15 @@ def simple_simulator(num_samples, width, height,
             s_noise = s_noise,
             p_noise = p_noise)
 
+        # add normal noise to the example image based on the level of
+        # b_noise desired
         add_normal_noise_to_image(X,b_noise)
         
+        # add each x and y to our already initialized placeholder lists
         x[i] = X
         y[i] = Y
 
+    # reshape the final target list to be 4 dimensional
     y = np.reshape(y, [num_samples, width, height, 1])
     
     return x, y
@@ -570,10 +660,29 @@ def f1_score_pixel_v_prob(prediction, target, threshold = 0.7):
     prediction from our network and return the f1 score. 
 
     Pixels with probablility > threshold will be considered synapses
+
+    :param: prediction <ndarray> - probability map that is the output
+        from our model
+
+    :param: target <ndarray> - pixelmap target that shows the exact
+        locations of where the synapses should have been predicted
+
+    :param: threshold <float> - value that represents the prediction
+        probability that has to be given in order for it to
+        actually be considered a correct guess
+
+    :return: np.mean(agg_fscore) <float> - the mean value of all of the
+        f1_scores when comparing the prediction to the target
     """
     assert(prediction.shape == target.shape)    
 
+    # initialize numpy array with zeros to the size of th
     agg_fscore = np.zeros(prediction.shape[0])
+
+    # loops the amount of times as the length of the first dimension
+    # calculates an f1_score for each loop by setting the prediction
+    # values to 1 if they are above the threshold and 0 otherwise
+    # then utilizing the f1_score method
     for i in range(len(prediction)):
         pred_pm = np.squeeze(prediction[:])
         targ = np.squeeze(target[:])
@@ -581,6 +690,7 @@ def f1_score_pixel_v_prob(prediction, target, threshold = 0.7):
         pred_pm[pred_pm != 1] = 0
         agg_fscore[i] = f1_score(pred_pm.astype(np.int), targ.astype(np.int))
 
+    # return the mean of all of these f1_score calculations
     return np.mean(agg_fscore)
 
 

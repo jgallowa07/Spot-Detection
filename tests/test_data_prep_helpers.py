@@ -47,30 +47,14 @@ class TestHelpers(tests.testDataPrep):
         """
         Tests for symquant -> pixelmap
         """
-        pass
+        # note, filepaths are relative to where you run nose.
+        path_to_roi = './Data/Annotation/synquant_output/z=4/RoiSet_g.zip'
+        
+        ## TODO: figure out how to get rid of these debug warnings so we 
+        # can finish these tests
+        output_map = synquant_to_pixelmap(path_to_roi)
 
-    
-    # def test_no_colocalization(self):
-    #     """
-    #     tests for no colocalization.
-    #     """
-
-    #     # note, filepaths are relative to where you run nose.
-    #     width1, height1 = 1024, 1024
-    #     anno_file1 = "./Data/Annotation/annotation_output/L1-D01-g_output.csv"
-
-    #     # Create three separate pixelmaps to use for colocalization testing       
-    #     pixelmap1 = dot_click_annoation_file_to_pixelmap(
-    #         anno_file = anno_file1,
-    #         width = width1,
-    #         height = height1,
-    #         dot_radius = 2)
-
-    #     # test colocalization with only one pixelmap
-    #     output = colocalization([pixelmap1])
-    #     self.a
-    #     self.assertEqual(output,"Please provide a list of at least two pixelmaps.")
-
+        sum_ones = np.sum(output_map)
 
     
     def test_two_colocalization(self):
@@ -340,5 +324,21 @@ class TestHelpers(tests.testDataPrep):
         
         
             
+    def test_f1_score_pixel_v_prob(self):
+        """
+            tests for f1_score_pixel_v_prob function
+        """
 
+        # f1 test with the value above the threshold
+        prediction = np.array(([.75,0,0],[0,1,0],[0,0,1]))
+        target = np.array(([0,0,1],[0,1,0],[1,0,0]))
+        F1_test = f1_score_pixel_v_prob(prediction, target)
+        self.assertEqual(F1_test, (1/3))
+
+        # f1 test with the value below the threshold
+        prediction = np.array(([.65,0,0],[0,1,0],[0,0,1]))
+        target = np.array(([0,0,1],[0,1,0],[1,0,0]))
+        F1_test = f1_score_pixel_v_prob(prediction, target)
+        self.assertTrue(F1_test > .39)
+        self.assertTrue(F1_test < .41)
 
