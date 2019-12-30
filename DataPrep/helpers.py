@@ -208,7 +208,7 @@ def sub_patch_pixelmap(image_pixelmap, size=32, height=(256,1024), width=(256,76
 
     :param: image_pixelmap <ndarray> - numpy 2d array corresponding to the pixelmap 
         to be sub-patched
-        
+
     :param: size <int> - the SIZExSIZE chunk to be grabbed
 
     :param: height <tuple> - tuple specifying the y start and stop positions (start, stop)  
@@ -241,32 +241,48 @@ def empirical_prep(list_of_paths, size=32, height=(256,1024), width=(256,768)):
     the list_of_paths parameter. The user can specify the area they would like to sub-image 
     as well as the size of the chunk they would like to grab.
 
-    list_of_paths: list of strings corresponding to the paths of the images wanting to be
-                sub-imaged
-    size: the SIZExSIZE chunk to be grabbed
-    height: tuple specifying the y start and stop positions (start, stop)  
+    :param: list_of_paths <list> - list of strings corresponding to the paths of 
+        the images wanting to be sub-imaged
+
+    :param: size <int> - the SIZExSIZE chunk to be grabbed
+
+    :param: height <tuple> - tuple specifying the y start and stop positions (start, stop)  
             DEFAULT: (256,1024)
-    width: tuple specifying the x start and stop positions (start, stop)  
+
+    :param: width <tuple> - tuple specifying the x start and stop positions (start, stop)  
             DEFAULT: (256,768)
 
-    This function will return a list of numpy ndarrays, of which contain all of the sub-images
-    for that given empirical image. There will be one item in the list for each empirical 
-    image given
+    :return: sub_empirical <ndarray> -This function will return a 4D numpy ndarray, of 
+    which contain all of the sub-images for that given empirical image. There will be 
+    one item in the list for each empirical image given
     """
 
     sub_empirical = []
+
+    # loop through length of list_of_paths
     for num in range(len(list_of_paths)):
+
+        # using pillow .crop function to sub-patch within the image
         pillow_opened_image = Image.open(list_of_paths[num])
         temp_sub_images = []
-        for i in range(height[0],height[1],size):  # this for loop isolates only the region of the image specified in the parameters
+
+        # crops SIZExSIZE chunks from the image and appends them as numpy arrays
+        # to sub_empirical list
+        # this for loop isolates only the region of the image specified in the 
+        # parameters
+        for i in range(height[0],height[1],size):  
             for j in range(width[0],width[1],size):
-                temp_pic = pillow_opened_image.crop((i,j,i+size,j+size)) # grabbing SIZExSIZE chunks and storing them in an array
-                # 7
+                # grabbing SIZExSIZE chunks and storing them in an array
+                temp_pic = pillow_opened_image.crop((i,j,i+size,j+size)) 
                 temp_pic = np.array(temp_pic)[:,:,0]
                 temp_sub_images.append(temp_pic)
+        
+        # for each item in list_of_paths save the temp images as one of the
+        # dimensions of the sub_empirical list
         temp_sub_images = np.array(temp_sub_images)
         sub_empirical.append(temp_sub_images)
     
+    # turn list into numpy ndarray
     sub_empirical = np.array(sub_empirical)
     
     # here, we are re-arranging the axes so 
