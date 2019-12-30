@@ -50,29 +50,6 @@ class TestHelpers(tests.testDataPrep):
         pass
 
     
-    # def test_no_colocalization(self):
-    #     """
-    #     tests for no colocalization.
-    #     """
-
-    #     # note, filepaths are relative to where you run nose.
-    #     width1, height1 = 1024, 1024
-    #     anno_file1 = "./Data/Annotation/annotation_output/L1-D01-g_output.csv"
-
-    #     # Create three separate pixelmaps to use for colocalization testing       
-    #     pixelmap1 = dot_click_annoation_file_to_pixelmap(
-    #         anno_file = anno_file1,
-    #         width = width1,
-    #         height = height1,
-    #         dot_radius = 2)
-
-    #     # test colocalization with only one pixelmap
-    #     output = colocalization([pixelmap1])
-    #     self.a
-    #     self.assertEqual(output,"Please provide a list of at least two pixelmaps.")
-
-
-    
     def test_two_colocalization(self):
         """
         tests for two-pixelmap colocalization.
