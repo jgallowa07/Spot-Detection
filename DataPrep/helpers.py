@@ -206,14 +206,19 @@ def sub_patch_pixelmap(image_pixelmap, size=32, height=(256,1024), width=(256,76
     user can specify the area they would like to sub-patch as well as the size of
     the patch they would like to grab.
 
-    image_pixelmap: numpy 2d array corresponding to the pixelmap to be sub-patched
-    size: the SIZExSIZE chunk to be grabbed
-    height: tuple specifying the y start and stop positions (start, stop)  
+    :param: image_pixelmap <ndarray> - numpy 2d array corresponding to the pixelmap 
+        to be sub-patched
+        
+    :param: size <int> - the SIZExSIZE chunk to be grabbed
+
+    :param: height <tuple> - tuple specifying the y start and stop positions (start, stop)  
             DEFAULT: (256,1024)
-    width: tuple specifying the x start and stop positions (start, stop)  
+
+    :param: width <tuple> - tuple specifying the x start and stop positions (start, stop)  
             DEFAULT: (256,768)
     
-    This function will return a numpy ndarray of SIZExSIZE 2-dimentional binary numpy ndarrays
+    :return: SUB_IMAGES <ndarray> - This function will return a numpy ndarray of 
+        SIZExSIZE 2-dimentional binary numpy ndarrays
     """
 
     SUB_IMAGES = []    # initialize an array for holding the sub images
