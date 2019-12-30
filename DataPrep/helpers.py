@@ -34,13 +34,15 @@ def dot_click_annoation_file_to_pixelmap(anno_file,
     row format: filepath, top x, top y, bottom x, bottom y. no header.
     
     
+    :param: anno_file <string>  - path to annotation file
 
-    width, and height represent the total size of the annotated image.
-    dot_radius is the size the of the circle centered around a clicked 
-    synapse. 
+    :param: width <int> - width of the sample 
+    
+    :param: height <int> - height of the sample
+    
+    :param: dot_radius <int> - radius of bumps
  
-    EX INPUT
-
+    EX Data in file:
     L1-D01-g.bmp,583,247,591,255,synapse
     L1-D01-g.bmp,589,256,597,264,synapse
     L1-D01-g.bmp,559,269,567,277,synapse
@@ -49,9 +51,9 @@ def dot_click_annoation_file_to_pixelmap(anno_file,
     L1-D01-g.bmp,607,281,615,289,synapse
     L1-D01-g.bmp,595,284,603,292,synapse
 
-    the function will return a 2-dimentional binary numpy ndarray object 
-    with the shape (width,height). 1's represent annotated images 
-    
+    :return: pixelmap <ndarray> - the function will return a 2-dimentional binary 
+    numpy ndarray object with the shape (width,height). 1's represent annotated 
+    images
     """
 
     # initialize a pixelmap
