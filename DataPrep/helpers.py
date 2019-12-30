@@ -579,32 +579,6 @@ def tensor_to_3dmap(tensor, out = None, cmap = "bone"):
 
 ###
 
-#def tensor_to_3dmap(tensor, out = None, cmap = "bone"):
-#    """
-#    A function which takes in a 2D numpy array and produces 
-#    a heatmap.
-#
-#    if a filename is given to out then it will save the fig,
-#    otherwise it will attempt to open the png with matplotlib.
-#    """
-#
-#    X = np.arange(0, tensor.shape[0])
-#    Y = np.arange(0, tensor.shape[1])
-#    X, Y = np.meshgrid(X, Y)
-#    fig = plt.figure()
-#    ax = fig.gca(projection='3d')
-#    surf = ax.plot_surface(X, Y, tensor, rstride=1, 
-#        cstride=1, cmap=cmap, linewidth=0, antialiased=False)
-#    fig.colorbar(surf, shrink=0.5, aspect=5)
-#    if out == None:
-#        plt.show()
-#    else:
-#        plt.savefig(out)
-#
-#    return None
-#
-###
-
 def simple_simulator(num_samples, width, height, 
         coloc_thresh, colocalization, radius = 2,
         s_noise = 0.2,
