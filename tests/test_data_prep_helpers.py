@@ -47,7 +47,14 @@ class TestHelpers(tests.testDataPrep):
         """
         Tests for symquant -> pixelmap
         """
-        pass
+        # note, filepaths are relative to where you run nose.
+        path_to_roi = './Data/Annotation/synquant_output/z=4/RoiSet_g.zip'
+        
+        ## TODO: figure out how to get rid of these debug warnings so we 
+        # can finish these tests
+        output_map = synquant_to_pixelmap(path_to_roi)
+
+        sum_ones = np.sum(output_map)
 
     
     def test_two_colocalization(self):
