@@ -340,5 +340,21 @@ class TestHelpers(tests.testDataPrep):
         
         
             
+    def test_f1_score_pixel_v_prob(self):
+        """
+            tests for f1_score_pixel_v_prob function
+        """
 
+        # f1 test with the value above the threshold
+        prediction = np.array(([.75,0,0],[0,1,0],[0,0,1]))
+        target = np.array(([0,0,1],[0,1,0],[1,0,0]))
+        F1_test = f1_score_pixel_v_prob(prediction, target)
+        self.assertEqual(F1_test, (1/3))
+
+        # f1 test with the value below the threshold
+        prediction = np.array(([.65,0,0],[0,1,0],[0,0,1]))
+        target = np.array(([0,0,1],[0,1,0],[1,0,0]))
+        F1_test = f1_score_pixel_v_prob(prediction, target)
+        self.assertTrue(F1_test > .39)
+        self.assertTrue(F1_test < .41)
 
