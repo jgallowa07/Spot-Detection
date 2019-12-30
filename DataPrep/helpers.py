@@ -253,8 +253,8 @@ def empirical_prep(list_of_paths, size=32, height=(256,1024), width=(256,768)):
             DEFAULT: (256,768)
 
     :return: sub_empirical <ndarray> -This function will return a 4D numpy ndarray, of 
-    which contain all of the sub-images for that given empirical image. There will be 
-    one item in the list for each empirical image given
+        which contain all of the sub-images for that given empirical image. There will be 
+        one item in the list for each empirical image given
     """
 
     sub_empirical = []
@@ -305,20 +305,23 @@ def f1_score(pixelmap1, pixelmap2):
     precision = true positive / (true positive + false positiv)
     recall = true positive / (true positive + false negative)
 
+    :param: pixelmap1, pixelmap2 <ndarray> - two pixelmaps of the same 
+        size which we would like to evaluate and get a metric of how they compare
 
-    pixelmap1, pixelmap2: two pixelmaps of the same size which we would like
-    to evaluate and get a metric of how they compare
-
-    This function will return a float value between 0 and 1. 0 being the worst
-    the model could be doing amd 1 being the best.
+    :return: 2/((1/precision) + (1/recall)) <float> - This function will return 
+        a float value between 0 and 1. 0 being the worst the model could be doing 
+        and 1 being the best.
     """
     assert(pixelmap1.shape == pixelmap2.shape)
     assert(pixelmap1.dtype == np.int and pixelmap2.dtype == np.int)
 
+    # sum the number of 1s in each of the three combinations 
+    # to be able to calculate the two metrics
     true_positive = np.sum(np.bitwise_and(pixelmap1, pixelmap2))
     false_positive = np.sum(np.bitwise_and(pixelmap1, ~pixelmap2))
     false_negative = np.sum(np.bitwise_and(~pixelmap1, pixelmap2))
 
+    # calculate the two metrics described above
     precision = true_positive / (true_positive + false_positive)
     recall = true_positive / (true_positive + false_negative)
 
