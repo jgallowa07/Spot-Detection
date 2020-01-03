@@ -43,7 +43,7 @@ def simulator(
     assert(type(width) == int)
     assert(type(height) == int)
     assert(type(coloc_thresh) == int)
-    assert(coloc_thresh <= 3)
+    assert(coloc_thresh <= 3 and coloc_thresh >= 1)
     assert(len(coloc_n) == 7)
     assert(len(coloc_p) == 7)
 
@@ -121,8 +121,6 @@ def add_normal_noise_to_image(image, gaussian_bg_sd, background_only = True):
     gaussian_bg_mean = 0
     bg = np.abs(np.random.normal(gaussian_bg_mean, gaussian_bg_sd, image.shape))
 
-    # add the noise to image param, skipping the dots, if required
-    # image[image == 0] += bg[image == 0] if backgound_only else image += bg
     if background_only:
         image[image == 0] += bg[image == 0] 
     else:
