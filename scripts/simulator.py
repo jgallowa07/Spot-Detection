@@ -47,7 +47,6 @@ def simulator(
     assert(len(coloc_n) == 7)
     assert(len(coloc_p) == 7)
 
-    
     x = np.zeros([num_samples, width, height, 3])
     y = np.zeros([num_samples, width, height])
     for i in range(num_samples):
