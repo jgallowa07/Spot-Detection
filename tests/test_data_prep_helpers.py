@@ -3,13 +3,13 @@ from __future__ import print_function
 from __future__ import division
 
 import sys
-#sys.path.insert(0, ' ../scripts/')
+sys.path.insert(0,"../")
 
 import numpy as np
 
-#from helpers import *
 import tests
-from DataPrep.helpers import *
+from scripts.helpers import *
+from scripts.simulator import *
 import numpy as np
 
 np.random.seed(23)

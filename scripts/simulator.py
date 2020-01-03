@@ -7,9 +7,10 @@ Authors: Jared G. Nick W. Annie W.
 
 import os
 import sys
+sys.path.insert(0,"../")
 
 import numpy as np
-from helpers import *
+from scripts.helpers import *
 
 
 def simulator(
