@@ -11,7 +11,6 @@ This file is for early experimentation of neural net work on various functions.
 
 import os
 import sys
-#sys.path.insert(0,"../")
 
 import numpy as np
 np.set_printoptions(threshold=sys.maxsize)
@@ -36,17 +35,17 @@ params = {"num_samples":3500,
             "coloc_n":[1 for _ in range(7)],
             "coloc_p":[0.5 for _ in range(7)],
             "radius":4,
-            "s_noise":0.15,
-            "p_noise":0.25,
-            "b_noise":0.15}
+            "spot_noise":0.15,
+            "point_noise":0.25,
+            "background_noise":0.15}
 
 x, y = simulator(**params)
 
-#plt.imshow(x[0])
-#plt.show()
-#plt.imshow(np.squeeze(y[0]))
-#plt.show()
-#sys.exit()
+plt.imshow(x[0])
+plt.show()
+plt.imshow(np.squeeze(y[0]))
+plt.show()
+sys.exit()
 
 print(f"simulated data set x has shape: {x.shape}")
 print(f"simulated data set y has shape: {y.shape}")

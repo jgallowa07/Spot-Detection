@@ -19,8 +19,6 @@ import matplotlib.pyplot as plt
 from PIL import Image
 from skimage.draw import circle
 from mpl_toolkits.mplot3d import Axes3D
-import cv2
-from read_roi import read_roi_zip
 
 ###
 
@@ -97,6 +95,7 @@ def dot_click_annoation_file_to_pixelmap(anno_file,
 ###
 
 def synquant_to_pixelmap(filename, size = 1024):
+    from read_roi import read_roi_zip
     """
     This function should take in the output from SynQuant
     https://www.biorxiv.org/content/10.1101/538769v1
