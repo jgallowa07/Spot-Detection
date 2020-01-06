@@ -83,9 +83,11 @@ The driver function included with `fmi_simulator` is `simulate`, with
 the following description:
 
 ```python
-help()
+help(fmi_simulator.simulate)
 Help on function simulate in module fmi_simulator:
+```
 
+```
 simulate(
     num_samples=10, 
     width=32, 
@@ -133,14 +135,20 @@ simulate(
 ```
 
 ```python
-# simulate example
+>>> # simulate example
+>>> import fmi_simulator
+>>> x, y = fmi_simulator.simulate()
+>>> x.shape
+(10, 32, 32, 3)
+>>> y.shape
+(10, 32, 32, 1)
 
-# visualize 
-plt.imshow(x)
-plt.show()
+
+>>> # visualize 
+>>> plt.imshow(x)
+>>> plt.show()
 ```
 
-More examples coming soon to a README near you ...
 
 ## Clicking
 
