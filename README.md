@@ -84,10 +84,11 @@ the following description:
 
 ```python
 help(fmi_simulator.simulate)
-Help on function simulate in module fmi_simulator:
 ```
 
 ```
+Help on function simulate in module fmi_simulator:
+
 simulate(
     num_samples=10, 
     width=32, 
@@ -145,7 +146,7 @@ simulate(
 
 
 >>> # visualize 
->>> plt.imshow(x)
+>>> plt.imshow(x[0])
 >>> plt.show()
 ```
 
