@@ -94,43 +94,6 @@ def simulator(
     return x, y
 
 
-def simple_simulator(
-        num_samples, 
-        width, height, 
-        coloc_thresh, 
-        colocalization, 
-        radius = 2,
-        s_noise = 0.2,
-        p_noise = 0.2,
-        b_noise = 0.2
-        ):
-
-    """
-    A very non-complex simulator
-    """
-
-    x = np.zeros([num_samples, width, height, 3])
-    y = np.zeros([num_samples, width, height])
-    for i in range(num_samples):
-        X, Y = generate_simulated_microscopy_sample(
-            colocalization = colocalization,
-            width = width,
-            height = height,
-            radius = radius,
-            coloc_thresh = coloc_thresh,
-            s_noise = s_noise,
-            p_noise = p_noise)
-
-        add_normal_noise_to_image(X,b_noise)
-        
-        x[i] = X
-        y[i] = Y
-
-    y = np.reshape(y, [num_samples, width, height, 1])
-    
-    return x, y
-
-
 def add_normal_noise_to_image(image, gaussian_bg_sd, background_only = True):
     """
     this image adds background noise (absolute value 
