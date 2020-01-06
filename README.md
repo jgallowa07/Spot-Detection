@@ -79,19 +79,76 @@ generate we also generate the 2D pixel map describing the groud truth
 for bumps which colocalize at least `coloc_thresh` times across the RGB
 channels.  
 
+The driver function included with `fmi_simulator` is `simulate`, with 
+the following description:
+
 ```python
-# simulate example
-x,y = generate_simulated_microscopy_sample(colocalization = [1,1,1,1,1,1,1], width=32, height=32, coloc_thresh = 2)
-
-# add noise to each pixel of background pulled from gaussian with variance = 0.1, mean 0
-add_normal_noise_to_image(x,0.1)
-
-# visualize 
-plt.imshow(x)
-plt.show()
+help(fmi_simulator.simulate)
+Help on function simulate in module fmi_simulator:
 ```
 
-More examples coming soon to a README near you ...
+```
+simulate(
+    num_samples=10, 
+    width=32, 
+    height=32, 
+    coloc_thresh=1, 
+    coloc_n=[1, 1, 1, 1, 1, 1, 1], 
+    coloc_p=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], 
+    radii_n=3, 
+    radii_p=0.85, 
+    spot_noise=0.2, 
+    point_noise=0.2, 
+    background_noise=0.2)
+
+    This function will generate samples of simulated flurescent microscopy images
+    along with the respective ground truth annotation. The simulations themselves are
+    defined by:
+    
+    :param: width, height <int> - The width and height of the simulated images
+        defined in number of pixels.
+    
+    :param: coloc_thresh <int> - This is a number, either 1, 2, or 3 which 
+        which primarily affects how we annotate the images as being true positives
+        or negative examples. Concretely, this is the threshold of number of layers
+        which any dot must colocalize in order to be considered as a synapse.
+    
+    :param: coloc_n, coloc_p <list[int]> - For each of the seven possible colocalization
+        patterns (1 all layers + 3 combinations of two layers + 3 individual layers),
+        the user passes the simulater a binomial distribution defined by n, p which 
+        determines the number of each colocalization patters - of each type - we expect 
+        among all our simulations. For example, the default is n = 1, and p = 0.5 for all
+        7 colocalization patterns. This means that each pattern has a 50% of being in a 
+        single simulated image. 
+    
+    :param: radii_n, radii_p <int> - The radii distribution of of dots simulated. n and p
+        represent the binomial distribution of radii of all simulated dots.
+    
+    :param: spot_noise <float [0-1]> the variance of the guassian noise added to all dots.
+    
+    # TODO Not sure this is necessary
+    :param: point_noise <float [0-1]> the variance of the guassian noise subtracted from
+         the center of all dots.
+    
+    :param: background_noise <float [0-1]> the variance of the guassian noise added to the
+        background.
+```
+
+```python
+>>> # simulate example
+>>> import fmi_simulator
+>>> x, y = fmi_simulator.simulate()
+>>> x.shape
+(10, 32, 32, 3)
+>>> y.shape
+(10, 32, 32, 1)
+
+
+>>> # visualize 
+>>> plt.imshow(x)
+>>> plt.show()
+```
+
 
 ## Clicking
 

@@ -12,17 +12,18 @@ import numpy as np
 from helpers import *
 
 
-def simulator(
+def simulate(
         num_samples = 10,
         width = 32,
         height = 32,
         coloc_thresh = 1,
         coloc_n = [1 for _ in range(7)],
         coloc_p = [0.5 for _ in range(7)],
-        radius = 4,
-        s_noise = 0.2,
-        p_noise = 0.2,
-        b_noise = 0.2
+        radii_n = 3,
+        radii_p = 0.85,
+        spot_noise = 0.2,
+        point_noise = 0.2,
+        background_noise = 0.2
         ):
 
     """
@@ -31,10 +32,32 @@ def simulator(
     defined by:
 
     :param: width, height <int> - The width and height of the simulated images
-        in number of pixels
+        defined in number of pixels.
 
     :param: coloc_thresh <int> - This is a number, either 1, 2, or 3 which 
+        which primarily affects how we annotate the images as being true positives
+        or negative examples. Concretely, this is the threshold of number of layers
+        which any dot must colocalize in order to be considered as a synapse.
 
+    :param: coloc_n, coloc_p <list[int]> - For each of the seven possible colocalization
+        patterns (1 all layers + 3 combinations of two layers + 3 individual layers),
+        the user passes the simulater a binomial distribution defined by n, p which 
+        determines the number of each colocalization patters - of each type - we expect 
+        among all our simulations. For example, the default is n = 1, and p = 0.5 for all
+        7 colocalization patterns. This means that each pattern has a 50% of being in a 
+        single simulated image. 
+
+    :param: radii_n, radii_p <int> - The radii distribution of of dots simulated. n and p
+        represent the binomial distribution of radii of all simulated dots.
+
+    :param: spot_noise <float [0-1]> the variance of the guassian noise added to all dots.
+
+    # TODO Not sure this is necessary
+    :param: point_noise <float [0-1]> the variance of the guassian noise subtracted from
+         the center of all dots.
+
+    :param: background_noise <float [0-1]> the variance of the guassian noise added to the
+        background.
 
     """
 
@@ -53,51 +76,15 @@ def simulator(
         coloc = [np.random.binomial(n,p) for n,p in zip(coloc_n,coloc_p)]
         X, Y = generate_simulated_microscopy_sample(
             colocalization = coloc,
+            radii_n = radii_n,
+            radii_p = radii_p,
             width = width,
             height = height,
-            radius = radius,
             coloc_thresh = coloc_thresh,
-            s_noise = s_noise,
-            p_noise = p_noise)
+            s_noise = spot_noise,
+            p_noise = point_noise)
 
-        add_normal_noise_to_image(X,b_noise)
-        
-        x[i] = X
-        y[i] = Y
-
-    y = np.reshape(y, [num_samples, width, height, 1])
-    
-    return x, y
-
-
-def simple_simulator(
-        num_samples, 
-        width, height, 
-        coloc_thresh, 
-        colocalization, 
-        radius = 2,
-        s_noise = 0.2,
-        p_noise = 0.2,
-        b_noise = 0.2
-        ):
-
-    """
-    A very non-complex simulator
-    """
-
-    x = np.zeros([num_samples, width, height, 3])
-    y = np.zeros([num_samples, width, height])
-    for i in range(num_samples):
-        X, Y = generate_simulated_microscopy_sample(
-            colocalization = colocalization,
-            width = width,
-            height = height,
-            radius = radius,
-            coloc_thresh = coloc_thresh,
-            s_noise = s_noise,
-            p_noise = p_noise)
-
-        add_normal_noise_to_image(X,b_noise)
+        add_normal_noise_to_image(X,background_noise)
         
         x[i] = X
         y[i] = Y
@@ -133,9 +120,10 @@ def add_normal_noise_to_image(image, gaussian_bg_sd, background_only = True):
 
 def generate_simulated_microscopy_sample(
         colocalization = [5] + [0 for _ in range(6)],
+        radii_n = None,
+        radii_p = None,
         width = 32,
         height = 32,
-        radius = 2,
         coloc_thresh = 3,
         s_noise = 0.2,
         p_noise = 0.2,
@@ -184,7 +172,7 @@ def generate_simulated_microscopy_sample(
     """
     
     assert(len(colocalization) == 7)
-    assert(radius < (width // 2) and radius < (height // 2))
+    #assert(radius < (width // 2) and radius < (height // 2))
     assert(coloc_thresh in [1,2,3])
     
     # initialize out empty layers.
@@ -196,23 +184,29 @@ def generate_simulated_microscopy_sample(
     # the first three are the layers for the simulated sample,
     # the last later is the pixelmap target
     layers_list = [[] for _ in range(4)]
+    radii_list = [[] for _ in range(4)]
     combs = [[0,1,2],[0,1],[1,2],[0,2],[0],[1],[2]]
   
     for i,layers in enumerate(combs):
         for num_dots in range(colocalization[i]):
+            radius = np.random.binomial(n = radii_n, p = radii_p)
+            if radius == 0:
+                continue
             x = np.random.randint(radius, width - radius)
             y = np.random.randint(radius, height - radius)
             for layer_index in layers:
                 layers_list[layer_index] += [(x,y)]
+                radii_list[layer_index] += [radius]
             if len(layers) >= coloc_thresh:
                 layers_list[3] += [(x,y)]
+                radii_list[3] += [radius]
 
     channels = [simulate_single_layer(
-        layers_list[i], width, height, radius,
+        layers_list[i], radii_list[i], width, height,
         s_noise = s_noise, p_noise = p_noise) for i in range(3)]
     simulated_sample = np.stack(channels,axis=2)    
     pixelmap_target = simulate_single_layer(
-        layers_list[3], width, height, radius, is_pixelmap = True)
+        layers_list[3], radii_list[3], width, height, is_pixelmap = True)
 
     return simulated_sample, pixelmap_target
 
@@ -223,9 +217,9 @@ def simulate_single_pixelmap_stub(
 
 def simulate_single_layer(
         xy_list,
+        radii,
         width,
         height,
-        radius,
         is_pixelmap = False,
         s_noise = 0.2,
         p_noise = 0.2
@@ -238,17 +232,20 @@ def simulate_single_layer(
     
 
     # not implimented yet
-    assert(type(radius) == int)
+    assert(len(radii) == len(xy_list))
 
     # init the tensor to be returned.
     sim_bump = np.zeros([width, height])
 
     # Step through all the x,y locations where the dots will be located 
     # on each channel,
-    for x,y in xy_list:
+    for dot, (x,y) in enumerate(xy_list):
     
         # Draw nice circle and init an array to store
         # respective activations,
+
+        radius = radii[dot]
+
         xx,yy = circle(x,y,radius)
         if is_pixelmap:
             sim_bump[xx,yy] = 1
@@ -263,10 +260,16 @@ def simulate_single_layer(
             # use pythagorian theorem to compute radius on discrete space!
             diff_from_center = math.sqrt((xx[i] - x)**2 + (yy[i] - y)**2)
 
+            # This is how we link radius of dots to the activation.
+            # we essentially just scale the exponential function 
+            # dots with wider radius have a higher variance distribution.
+            #c = np.log(5) / ((-1 * radius) ** 2)
+            c = 2.302 / ((-1 * radius) ** 2)
+
             # This is where we sample from the exponential "bump"
             # Question, How dow we make this bump wider, raise the exponent.
-            activation = np.exp(-((0.5*diff_from_center)**2))
-       
+            activation = np.exp(-1 * c * (diff_from_center**2))
+           
             # we then add guassian noise the add another level of randomness 
             activation_list[i] = activation + np.abs(np.random.normal(0,s_noise))
 
