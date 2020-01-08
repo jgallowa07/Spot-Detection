@@ -5,6 +5,7 @@ Data/Simulated
 *.DS_Store
 tests/sandbox_nick.py
 tests/output/
+Data/Annotation/annotation_output/pixel_annotate_*
 
 # ignore meta-data from vscode
 .vscode
