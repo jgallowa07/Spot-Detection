@@ -429,7 +429,9 @@ def crop_empirical(path, x, y, size):
     cropped_image = np.array(cropped_image)[:,:,0]
 
     # return
-    return cropped_image
+    path = path.strip().split('/')
+    dump_name = path[-1][:-4]+ '_' + str(x) + '_' + str(y) + '_' + str(size) + '.out'
+    cropped_image.dump('../Annotation/pixel_level/' + dump_name)
 
 
 
