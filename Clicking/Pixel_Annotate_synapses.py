@@ -35,7 +35,7 @@ img = np.load(args["image"], allow_pickle = True)
 
 
 # initialize an empty pixelmap for output
-pixelmap = np.zeros(img.shape[:-1]).astype(np.int)
+pixelmap = np.zeros(np.squeeze(img).shape).astype(np.int)
 
 def annotate(event, x, y, flags, params):
     if event == cv2.EVENT_LBUTTONDOWN and (x,y) not in clicked_points:
@@ -64,10 +64,12 @@ while True:
 
 cv2.destroyAllWindows()
 
+print(pixelmap.shape)
+
 # dumps the current SIZExSIZE image to a file with the prefix given 
 # with the -o flag and ending with the number of image annotated
 # followed by .out
-np.transpose(pixelmap).dump(out + args["out"] + ".out")
+np.transpose(pixelmap).dump(args["out"] + ".out")
 
 
 
