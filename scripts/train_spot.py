@@ -21,18 +21,17 @@ from matplotlib import pyplot as plt
 from networks import *
 import time
 from helpers import *
-from simulator import *
+from fmi_simulator import *
 
 
-output = "l2_s05_p45_b20"
-epochs = 50
+exp_dir = "L1-D02-z_490_448_64"
+epochs = 2
 
 # Hard Dataset
 
 params = {"num_samples":10,
             "width":64,
             "height":64,
-            "coloc_thresh":2,
             "num_dots_n": 5,
             "num_dots_p": 0.85,
             "radii_n":4,
@@ -63,12 +62,27 @@ train_y = y[vali_split:,:,:,:]
 model = deeper_direct_CNN(x,y)
 print(model.summary())
 
+
 # fit the model
 model.fit(train_x, train_y, 
         validation_data = (vali_x, vali_y),
         epochs = epochs)
 
-pred = model.predict(test_x)
-pred.dump(f"./output/pred_{output}.out")
-test_x.dump(f"./output/x_{output}.out")
-test_y.dump(f"./output/y_{output}.out")
+test_emp_image = np.load(f"{exp_dir}/{exp_dir}_image.out", allow_pickle = True)
+test_emp_image = np.reshape(test_emp_image,(1,64,64,1))
+
+print(test_emp_image.shape)
+print(test_x.shape)
+
+
+pred_emp = model.predict(test_emp_image)
+pred_sim = model.predict(test_x)
+
+print(pred_emp.shape)
+print(pred_sim.shape)
+
+sys.exit()
+
+pred_emp.dump(f"./{exp_dir}/{exp_dir}_pred_emp.out")
+pred_sim.dump(f"./{exp_dir}/{exp_dir}_pred_sim.out")
+test_y.dump(f"./{exp_dir}/{exp_dir}_sim_y.out")

@@ -102,6 +102,7 @@ def simulate_single_layers(
         x[i] = X
         y[i] = Y
 
+    x = np.reshape(x, [num_samples, width, height, 1])
     y = np.reshape(y, [num_samples, width, height, 1])
     
     return x, y
