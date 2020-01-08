@@ -6,6 +6,8 @@ Data/Simulated
 tests/sandbox_nick.py
 tests/output/
 Data/Annotation/annotation_output/pixel_annotate_*
+Clicking/color_img.jpg
+Data/Annotation/pixel_level/
 
 # ignore meta-data from vscode
 .vscode
