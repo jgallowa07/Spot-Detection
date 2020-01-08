@@ -12,8 +12,101 @@ sys.path.insert(0,"../")
 import numpy as np
 from scripts.helpers import *
 
+def simulate_single_layers(
+        num_samples = 10,
+        width = 32,
+        height = 32,
+        num_dots_n = 5,
+        num_dots_p = 0.5,
+        radii_n = 3,
+        radii_p = 0.85,
+        spot_noise = 0.2,
+        point_noise = 0.2,
+        background_noise = 0.2
+        ):
 
-def simulate(
+    """
+    This function will generate single layer 
+    samples of simulated flurescent microscopy images
+    along with the respective ground truth annotation. 
+    The simulations themselves are defined by:
+
+    :param: width, height <int> - The width and height of the simulated images
+        defined in number of pixels.
+
+    :param: coloc_thresh <int> - This is a number, either 1, 2, or 3 which 
+        which primarily affects how we annotate the images as being true positives
+        or negative examples. Concretely, this is the threshold of number of layers
+        which any dot must colocalize in order to be considered as a synapse.
+
+    :param: num_dots_n, num_dots_p <int> - these parameters define the expected 
+        binomial distribution of dots among all simulated images where n is the number
+        of trials (bernoulli trial for dot or no dot) and p is the probability of success.
+        The default is n = 5, and p = 0.5 meaning, on average, we expect 2.5 dots per image.
+        
+    :param: radii_n, radii_p <int> - The radii distribution of of dots simulated. n and p
+        represent the binomial distribution of radii of all simulated dots. NOTE that 
+        we floor the radius size of any one dot to be 2.
+
+    :param: spot_noise <float [0-1]> the variance of the guassian noise added to all dots.
+
+    # TODO Not sure this is necessary
+    :param: point_noise <float [0-1]> the variance of the guassian noise subtracted from
+         the center of all dots.
+
+    :param: background_noise <float [0-1]> the variance of the guassian noise added to the
+        background.
+
+    """
+
+    # some very basic error handling
+    assert(type(num_samples) == int)
+    assert(type(width) == int)
+    assert(type(height) == int)
+
+    x = np.zeros([num_samples, width, height])
+    y = np.zeros([num_samples, width, height])
+    for i in range(num_samples):
+
+        num_dots = np.random.binomial(n = num_dots_n, p = num_dots_p)
+        radii = np.random.binomial(n = radii_n, p = radii_p, size = num_dots)
+        radii[radii == 0] = 2
+        radii[radii == 1] = 2
+        max_radius = max(radii)
+        dots_x = np.random.randint(max_radius, width - max_radius, size = num_dots)
+        dots_y = np.random.randint(max_radius, height - max_radius, size = num_dots)
+        xy_list = [(dot_x,dot_y) for dot_x, dot_y in zip(dots_x, dots_y)]
+
+        X = simulate_single_layer(
+                xy_list = xy_list,
+                radii = radii,
+                width = width,
+                height = width,
+                is_pixelmap = False,
+                s_noise = spot_noise,
+                p_noise = point_noise
+                )
+
+        Y = simulate_single_layer(
+                xy_list = xy_list,
+                radii = radii,
+                width = width,
+                height = width,
+                is_pixelmap = True,
+                s_noise = spot_noise,
+                p_noise = point_noise
+                )
+
+        add_normal_noise_to_image(X,background_noise)
+        
+        x[i] = X
+        y[i] = Y
+
+    y = np.reshape(y, [num_samples, width, height, 1])
+    
+    return x, y
+
+def simulate_colocalized_triplets(
         num_samples = 10,
         width = 32,
         height = 32,
