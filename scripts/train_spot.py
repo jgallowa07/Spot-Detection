@@ -81,8 +81,6 @@ pred_sim = model.predict(test_x)
 print(pred_emp.shape)
 print(pred_sim.shape)
 
-sys.exit()
-
 pred_emp.dump(f"./{exp_dir}/{exp_dir}_pred_emp.out")
 pred_sim.dump(f"./{exp_dir}/{exp_dir}_pred_sim.out")
 test_y.dump(f"./{exp_dir}/{exp_dir}_sim_y.out")
