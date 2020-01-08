@@ -24,7 +24,7 @@ from scripts.helpers import *
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-i", "--image", required=True, help="Path to the image")
-ap.add_argument("-o", "--out", required=True, help="Path to the annotation csv")
+ap.add_argument("-o", "--out", required=True, help="Path to the annotation output")
 args = vars(ap.parse_args())
 
 # a unique set of clicked points
@@ -67,7 +67,7 @@ cv2.destroyAllWindows()
 # dumps the current SIZExSIZE image to a file with the prefix given 
 # with the -o flag and ending with the number of image annotated
 # followed by .out
-np.transpose(pixelmap).dump('../Annotation/pixel_level/' + args["out"] + ".out")
+np.transpose(pixelmap).dump(out + args["out"] + ".out")
 
 
 
