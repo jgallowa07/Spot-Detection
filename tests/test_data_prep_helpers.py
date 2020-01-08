@@ -9,7 +9,7 @@ import numpy as np
 
 import tests
 from scripts.helpers import *
-from scripts.simulator import *
+from scripts.fmi_simulator import *
 import numpy as np
 
 np.random.seed(23)
@@ -252,7 +252,7 @@ class TestHelpers(tests.testDataPrep):
         height = 32
 
         x,y = generate_simulated_microscopy_sample(colocalization = [1,1,1,1,1,1,1], 
-        width=width, height=height, coloc_thresh = 2)
+        width=width, height=height, coloc_thresh = 2, radii_n= 3, radii_p= 1) 
 
         # Test x and y shape
         self.assertEqual(x.shape, (32,32,3))
@@ -271,11 +271,11 @@ class TestHelpers(tests.testDataPrep):
                 if(y[i][j] == 0):
                     target_zero_count += 1
         self.assertEqual(example_zero_count_channel0, target_zero_count)
-        self.assertEqual(example_zero_count_channel1, target_zero_count)
+        self.assertTrue(example_zero_count_channel1 < target_zero_count)
 
 
         x,y = generate_simulated_microscopy_sample(colocalization = [0,0,0,1,0,0,0], 
-        width=32, height=32, coloc_thresh = 2)
+        width=32, height=32, coloc_thresh = 2, radii_n= 3, radii_p= 1)
 
         # Test x and y shape
         self.assertEqual(x.shape, (32,32,3))
@@ -299,7 +299,7 @@ class TestHelpers(tests.testDataPrep):
 
 
         x,y = generate_simulated_microscopy_sample(colocalization = [0,0,0,1,0,0,0], 
-        width=32, height=32, coloc_thresh = 3)
+        width=32, height=32, coloc_thresh = 3, radii_n= 3, radii_p= 1)
 
         # Test x and y shape
         self.assertEqual(x.shape, (32,32,3))
@@ -342,3 +342,23 @@ class TestHelpers(tests.testDataPrep):
         self.assertTrue(F1_test > .39)
         self.assertTrue(F1_test < .41)
 
+
+
+    def test_crop_empirical(self):
+        """
+            Tests for cropping specific sections of empirical images
+        """
+
+        # paths are relative to where you run the tests from
+        path_to_empirical = './Data/Empirical/L1-D02-z.bmp'
+        cropped_image = crop_empirical(path_to_empirical, x = 490, y = 448, size = 64)
+        self.assertEqual(cropped_image.shape, (64,64))
+
+
+        cropped_image = crop_empirical(path_to_empirical, x = 0, y = 0, size = 32)
+        self.assertEqual(cropped_image.shape, (32,32))
+
+
+        ### Expect this to fail because the coordinates are out of bounds
+        # cropped_image = crop_empirical(path_to_empirical, x = 1024, y = 1024, size = 64)
+        # self.assertEqual(cropped_image.shape, (32,32))
