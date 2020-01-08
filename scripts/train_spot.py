@@ -71,16 +71,16 @@ model.fit(train_x, train_y,
 test_emp_image = np.load(f"{exp_dir}/{exp_dir}_image.out", allow_pickle = True)
 test_emp_image = np.reshape(test_emp_image,(1,64,64,1))
 
-print(test_emp_image.shape)
-print(test_x.shape)
-
+#print(test_emp_image.shape)
+#print(test_x.shape)
 
 pred_emp = model.predict(test_emp_image)
 pred_sim = model.predict(test_x)
 
-print(pred_emp.shape)
-print(pred_sim.shape)
+#print(pred_emp.shape)
+#print(pred_sim.shape)
 
 pred_emp.dump(f"./{exp_dir}/{exp_dir}_pred_emp.out")
 pred_sim.dump(f"./{exp_dir}/{exp_dir}_pred_sim.out")
 test_y.dump(f"./{exp_dir}/{exp_dir}_sim_y.out")
+test_x.dump(f"./{exp_dir}/{exp_dir}_sim_x.out")
