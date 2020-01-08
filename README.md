@@ -27,7 +27,7 @@ channels independently. These bumps are centered at some x,y location on
 any one channel, and the activation of each pixel depends on the euclidean 
 distance to the center of the dot given, where the number of pixels for 
 any one center is defined by the radius in pixels. Given distance to the 
-center of a dot, the activation is calculated by the exponential <annie>
+center of a dot, the activation is calculated by an exponential distribution,
 and incremented by some some Gaussian noise. -- TODO finish
 
 **2. Deep Learning**
@@ -35,11 +35,10 @@ Once a dataset has modeled dots/bumps/spots sufficiently,
 we use a relatively strait-forward convolutional neural network architecture
 which takes 3-channel images (3D tensors), and outputs probability maps 
 (2D tensors) describing whether or not that pixel is part of a dot-of-interest.
+We train the neural network to identify _colocalization_ between layers - meaning
+
 We measure the accuracy of our model by the F1-score (precision and recall values)
 described below. -- TODO finish
-
-**3. Predict Empirical Synapses**
-TODO
 
 
 ## Installation

@@ -211,10 +211,6 @@ def generate_simulated_microscopy_sample(
 
     return simulated_sample, pixelmap_target
 
-# TODO
-def simulate_single_pixelmap_stub(
-        ):
-    pass
 
 def simulate_single_layer(
         xy_list,
@@ -246,8 +242,8 @@ def simulate_single_layer(
         # respective activations,
 
         radius = radii[dot]
-
         xx,yy = circle(x,y,radius)
+
         if is_pixelmap:
             sim_bump[xx,yy] = 1
             continue
@@ -268,7 +264,6 @@ def simulate_single_layer(
             c = 2.302 / ((-1 * radius) ** 2)
 
             # This is where we sample from the exponential "bump"
-            # Question, How dow we make this bump wider, raise the exponent.
             activation = np.exp(-1 * c * (diff_from_center**2))
            
             # we then add guassian noise the add another level of randomness 
