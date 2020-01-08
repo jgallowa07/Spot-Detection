@@ -396,7 +396,7 @@ def f1_score_pixel_v_prob(prediction, target, threshold = 0.7):
 
 
 
-def crop_empirical(path, x, y, size):
+def crop_empirical(path, x, y, size, out = './Data/Annotation/pixel_level/'):
     """
     The purpose of this funciton is to be able to crop a single layer of an 
     empirical image to use either as background for simulation or for predicitons
@@ -409,6 +409,8 @@ def crop_empirical(path, x, y, size):
     :param: y <float> - starting y position to crop from
 
     :param: size <int> - the SIZExSIZE chunk to crop from the given image
+
+    :param: out <string> - path the desired outut location of the dump
 
     :return: cropped_image <ndarray> - numpy ndarray containing the
         cropped section of the image
@@ -428,10 +430,12 @@ def crop_empirical(path, x, y, size):
     cropped_image = pillow_opened_image.crop((x,y,x+size,y+size)) 
     cropped_image = np.array(cropped_image)[:,:,0]
 
-    # return
     path = path.strip().split('/')
     dump_name = path[-1][:-4]+ '_' + str(x) + '_' + str(y) + '_' + str(size) + '.out'
-    cropped_image.dump('../Annotation/pixel_level/' + dump_name)
+    cropped_image.dump(out + dump_name)
+
+    # return
+    return cropped_image
 
 
 
