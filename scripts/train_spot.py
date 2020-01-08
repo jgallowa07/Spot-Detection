@@ -1,10 +1,11 @@
 
 """
-File: Helpers.py
+File: train_spot.py
 Authors Jared Galloway, Nick Wagner, Annie Wang
 Date: 11/17/2019
 
-This file is for early experimentation of neural net work on various functions.
+This file is for early experimentation of neural net work on simulated
+and empirical images.
 """
 
 ##############################################################################
@@ -28,24 +29,19 @@ epochs = 50
 
 # Hard Dataset
 
-params = {"num_samples":3500,
+params = {"num_samples":10,
             "width":64,
             "height":64,
             "coloc_thresh":2,
-            "coloc_n":[1 for _ in range(7)],
-            "coloc_p":[0.5 for _ in range(7)],
-            "radius":4,
-            "spot_noise":0.15,
-            "point_noise":0.25,
+            "num_dots_n": 5,
+            "num_dots_p": 0.85,
+            "radii_n":4,
+            "radii_p":0.65,
+            "spot_noise":0.2,
+            "point_noise":0.2,
             "background_noise":0.15}
 
-x, y = simulator(**params)
-
-plt.imshow(x[0])
-plt.show()
-plt.imshow(np.squeeze(y[0]))
-plt.show()
-sys.exit()
+x, y = simulate_single_layers(**params)
 
 print(f"simulated data set x has shape: {x.shape}")
 print(f"simulated data set y has shape: {y.shape}")
