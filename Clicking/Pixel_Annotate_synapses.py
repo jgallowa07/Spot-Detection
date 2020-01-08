@@ -19,17 +19,19 @@ import os
 
 import sys
 sys.path.insert(0,"../")
-from DataPrep.helpers import *
+from scripts.helpers import *
 
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-i", "--image", required=True, help="Path to the image")
 ap.add_argument("-o", "--out", required=True, help="Path to the annotation csv")
-ap.add_argument("-s", "--size", default=32, help="size of image sub-patches")
-ap.add_argument("-r", "--range", default=(0,1), help="range of the sub-patched images to annotate. ex: (0,2) will load the first two of the sub-patched images for annotation", type=tuple)
+ap.add_argument("-s", "--size", default=32, help="size of image sub-patches", type = int)
+ap.add_argument("-r1", "--range1", default=0, help="first integer value in range of the sub-patched images to annotate ex: -r1 0 -r2 2 will load the first two of the sub-patched images for annotation", type=int)
+ap.add_argument("-r2", "--range2", default=1, help="second integer value in range of the sub-patched images to annotate ex: -r1 0 -r2 2 will load the first two of the sub-patched images for annotation", type=int)
 args = vars(ap.parse_args())
 
-images_to_annotate = args["range"]
+images_to_annotate = [args["range1"]]
+images_to_annotate.append(args["range2"])
 
 # Utilizes empirical prep 
 empirical_sub_patched = empirical_prep([args["image"]], size=args["size"])
@@ -37,7 +39,7 @@ empirical_sub_patched = empirical_prep([args["image"]], size=args["size"])
 # this loops the number of times between the first number given in the range
 # and the second to allow for annotation of SIZExSIZE patches and being able to
 # choose which ones to annotate at the time
-for i in range(int(images_to_annotate[1]), int(images_to_annotate[3])):
+for i in range(int(images_to_annotate[0]), int(images_to_annotate[1])):
     # a unique set of clicked points
     clicked_points = set()
 
