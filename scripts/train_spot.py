@@ -68,7 +68,7 @@ model.fit(train_x, train_y,
         validation_data = (vali_x, vali_y),
         epochs = epochs)
 
-test_emp_image = np.load(f"{exp_dir}/{exp_dir}_image.out", allow_pickle = True)
+test_emp_image = np.load(f"{exp_dir}/{exp_dir}_image_scaled.out", allow_pickle = True)
 test_emp_image = np.reshape(test_emp_image,(1,64,64,1))
 
 #print(test_emp_image.shape)
