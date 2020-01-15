@@ -14,15 +14,14 @@ import os
 import sys
 
 import numpy as np
-np.set_printoptions(threshold=sys.maxsize)
 import tensorflow as tf
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 from matplotlib import pyplot as plt
 from networks import *
 import time
 from helpers import *
 from fmi_simulator import *
 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 exp_dir = "L1-D02-z_490_448_64"
 epochs = 2

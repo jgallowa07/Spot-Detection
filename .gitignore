@@ -1,6 +1,8 @@
 ./Attic
 ./png
 
+notebooks/.ipynb_checkpoints
+
 Data/Simulated
 *.DS_Store
 tests/sandbox_nick.py

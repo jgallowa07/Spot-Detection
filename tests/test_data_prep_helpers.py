@@ -9,7 +9,7 @@ import numpy as np
 
 import tests
 from scripts.helpers import *
-from scripts.fmi_simulator import *
+from scripts.dot_simulator import *
 import numpy as np
 
 np.random.seed(23)
