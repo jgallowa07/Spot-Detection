@@ -69,6 +69,16 @@ def single_layers_simulator(
     for i in range(num_samples):
 
         num_dots = np.random.binomial(n = num_dots_n, p = num_dots_p)
+    
+        # if num dots is zero, then we should just simulate background noise.
+        if num_dots == 0:
+            X = np.zeros([width, height])
+            add_normal_noise_to_image(X,background_noise)
+            Y = np.zeros([width, height])
+            x[i] = X
+            y[i] = Y 
+            continue
+            
         radii = np.random.binomial(n = radii_n, p = radii_p, size = num_dots)
         radii[radii == 0] = 2
         radii[radii == 1] = 2
