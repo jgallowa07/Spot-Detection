@@ -1,44 +1,14 @@
-# Super Mega McEasy Dot Net. 
+# Spot Detection Using Convolutional Neural Networks 
 
-Obviously we need a better name. haha. 
+## Abstract
 
-**Overview**
-This repository contains the code for UO BGMP synapse detection group working 
-for the 
-[Washburn Lab](https://ion.uoregon.edu/content/philip-washbourne) 
-to create, and quantify the accuracy of a
-synapse detection pipeline given confocal microscopy images.
-Generally we use train-through-simulation technique which requires 
-_no_ annotated empirical images, while remaining supervised.
-The simulations parameters can be tuned simply to more closely match data of interest.
-While this has been done before, (TODO cite) our method focuses on simplicity, effeciency. 
-colocalization between image channels, and easy training of a model which can then be
-used directly on empirical data.
+Spot detection is an important task in many fields such as Biology, Astronomy, and Physics. Unfortunately, the task of counting spots in images can take experts many laborious hours to do by hand. Recent studies (cite) have shown that Machine Learning has potential to automate this task. However, It remains a problem to acquire pixel-level annotations needed as targets for any type of supervised learning.  Here, we present a novel method of training convolutional neural networks on simulated images --- allowing users to completely side-step the need for human annotated data sets. Our results exemplify that this method offers a competitive F1 score on empirical, fluorescent microscopy images when compared to other supervised machine learning methods.
 
-**1. simulation** :
-This package takes a few parameters such as dot radius, background noise variance,
-and a few others to simulate the _colocalization_ of 2D exponential  bumps across
-3 different channels. Often with florescent microscopy images such immuno-labeling,
-it is necessary for "dots" to be seen across some channels or all channels to be 
-of interest. Our simulation interface allows users to specify the amount 
-of complete colocalization (a bump shared across all channels) bi-localized? 
-(across two channels, for any combination), and singlet bumps on any one of the
-channels independently. These bumps are centered at some x,y location on 
-any one channel, and the activation of each pixel depends on the euclidean 
-distance to the center of the dot given, where the number of pixels for 
-any one center is defined by the radius in pixels. Given distance to the 
-center of a dot, the activation is calculated by an exponential distribution,
-and incremented by some some Gaussian noise. -- TODO finish
+## Simulation
 
-**2. Deep Learning**
-Once a dataset has modeled dots/bumps/spots sufficiently, 
-we use a relatively strait-forward convolutional neural network architecture
-which takes 3-channel images (3D tensors), and outputs probability maps 
-(2D tensors) describing whether or not that pixel is part of a dot-of-interest.
-We train the neural network to identify _colocalization_ between layers - meaning
+<a href="https://www.codecogs.com/eqnedit.php?latex=A()&space;=" target="_blank"><img src="https://latex.codecogs.com/gif.latex?A()&space;=" title="A() =" /></a>
 
-We measure the accuracy of our model by the F1-score (precision and recall values)
-described below. -- TODO finish
+## Our Model
 
 
 ## Installation
@@ -82,71 +52,10 @@ The driver function included with `fmi_simulator` is `simulate`, with
 the following description:
 
 ```python
-help(fmi_simulator.simulate)
 ```
 
 ```
-Help on function simulate in module fmi_simulator:
 
-simulate(
-    num_samples=10, 
-    width=32, 
-    height=32, 
-    coloc_thresh=1, 
-    coloc_n=[1, 1, 1, 1, 1, 1, 1], 
-    coloc_p=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], 
-    radii_n=3, 
-    radii_p=0.85, 
-    spot_noise=0.2, 
-    point_noise=0.2, 
-    background_noise=0.2)
-
-    This function will generate samples of simulated flurescent microscopy images
-    along with the respective ground truth annotation. The simulations themselves are
-    defined by:
-    
-    :param: width, height <int> - The width and height of the simulated images
-        defined in number of pixels.
-    
-    :param: coloc_thresh <int> - This is a number, either 1, 2, or 3 which 
-        which primarily affects how we annotate the images as being true positives
-        or negative examples. Concretely, this is the threshold of number of layers
-        which any dot must colocalize in order to be considered as a synapse.
-    
-    :param: coloc_n, coloc_p <list[int]> - For each of the seven possible colocalization
-        patterns (1 all layers + 3 combinations of two layers + 3 individual layers),
-        the user passes the simulater a binomial distribution defined by n, p which 
-        determines the number of each colocalization patters - of each type - we expect 
-        among all our simulations. For example, the default is n = 1, and p = 0.5 for all
-        7 colocalization patterns. This means that each pattern has a 50% of being in a 
-        single simulated image. 
-    
-    :param: radii_n, radii_p <int> - The radii distribution of of dots simulated. n and p
-        represent the binomial distribution of radii of all simulated dots.
-    
-    :param: spot_noise <float [0-1]> the variance of the guassian noise added to all dots.
-    
-    # TODO Not sure this is necessary
-    :param: point_noise <float [0-1]> the variance of the guassian noise subtracted from
-         the center of all dots.
-    
-    :param: background_noise <float [0-1]> the variance of the guassian noise added to the
-        background.
-```
-
-```python
->>> # simulate example
->>> import fmi_simulator
->>> x, y = fmi_simulator.simulate()
->>> x.shape
-(10, 32, 32, 3)
->>> y.shape
-(10, 32, 32, 1)
-
-
->>> # visualize 
->>> plt.imshow(x[0])
->>> plt.show()
 ```
 
 
@@ -158,12 +67,4 @@ cv2, the script writes out PASCAL-VOL style csv which gives a bounding box
 for each annotated synapse which has been clicked. These images
 are used both to quantify existing methods, as well as test our own.
 
-TODO: We should make a script which can will allow the user to make a pixel map 
-of a 32 X 32 image! This would be a much better way to quantify, no?
-
-## DataPrep
-
-Conceptually, Dataprep is just a plethora of helpful function we use 
-to simulate, train on, and transform data to accomplish the task of 
-spot detection.
 
