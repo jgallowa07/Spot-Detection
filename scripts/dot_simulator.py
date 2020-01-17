@@ -12,7 +12,7 @@ sys.path.insert(0,"../")
 import numpy as np
 from scripts.helpers import *
 
-def simulate_single_layers(
+def single_layers_simulator(
         num_samples = 10,
         width = 32,
         height = 32,
@@ -107,7 +107,7 @@ def simulate_single_layers(
     
     return x, y
 
-def simulate_colocalized_triplets(
+def colocalized_triplets_simulator(
         num_samples = 10,
         width = 32,
         height = 32,
