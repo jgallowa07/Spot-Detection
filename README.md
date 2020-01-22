@@ -4,6 +4,8 @@
 
 Spot detection is an important task in many fields such as Biology, Astronomy, and Physics. Unfortunately, the task of counting spots in images can take experts many laborious hours to do by hand. Recent studies (cite) have shown that Machine Learning has potential to automate this task. However, It remains a problem to acquire pixel-level annotations needed as targets for any type of supervised learning.  Here, we present a novel method of training convolutional neural networks on simulated images --- allowing users to completely side-step the need for human annotated data sets. Our results exemplify that this method offers a competitive F1 score on empirical, fluorescent microscopy images when compared to other supervised machine learning methods.
 
+To see a full walk through of our experimental workflow, it is reccomended you look at the Jupyter Notebook found in `Notebooks/train_spot.ipynb`
+
 ## Simulation
 
 Often the natural word follows explicit rules and patterns which we can closely model using known probability distributions and heuristic patterns. When looking at empirical images containing spots of activation, the clear pattern is a focal point of activation which clearly tapers off in the surrounding pixels in a round shape, with exceptions. In our simulations, we modeled this with a 2-dimensional Gaussian ``bump'' scaled by the radius for any given spot. Concretely, given 
