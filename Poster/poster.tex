@@ -1,0 +1,236 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Jacobs Landscape Poster
+% LaTeX Template
+% Version 1.0 (29/03/13)
+%
+% Created by:
+% Computational Physics and Biophysics Group, Jacobs University
+% https://teamwork.jacobs-university.de:8443/confluence/display/CoPandBiG/LaTeX+Poster
+% 
+% Further modified by:
+% Nathaniel Johnston (nathaniel@njohnston.ca)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[final]{beamer}
+
+\usepackage[size=custom,height=91.44,width=106.68, scale=1]{beamerposter} % Use the beamerposter package for laying out the poster
+
+\usetheme{confposter} % Use the confposter theme supplied with this template
+
+\setbeamercolor{block title}{fg=ngreen,bg=white} % Colors of the block titles
+\setbeamercolor{block body}{fg=black,bg=white} % Colors of the body of blocks
+\setbeamercolor{block alerted title}{fg=white,bg=dblue!70} % Colors of the highlighted block titles
+\setbeamercolor{block alerted body}{fg=black,bg=dblue!10} % Colors of the body of highlighted blocks
+% Many more colors are available for use in beamerthemeconfposter.sty
+
+%-----------------------------------------------------------
+% Define the column widths and overall poster size
+% To set effective sepwid, onecolwid and twocolwid values, first choose how many columns you want and how much separation you want between columns
+% In this template, the separation width chosen is 0.024 of the paper width and a 4-column layout
+% onecolwid should therefore be (1-(# of columns+1)*sepwid)/# of columns e.g. (1-(4+1)*0.024)/4 = 0.22
+% Set twocolwid to be (2*onecolwid)+sepwid = 0.464
+% Set threecolwid to be (3*onecolwid)+2*sepwid = 0.708
+
+\newlength{\sepwid}
+\newlength{\onecolwid}
+\newlength{\twocolwid}
+\newlength{\threecolwid}
+\newlength{\widthcm}
+\setlength{\widthcm}{106.68cm}
+% \setlength{\paperwidth}{48in} % A0 width: 46.8in
+% \setlength{\paperheight}{36in} % A0 height: 33.1in
+\setlength{\sepwid}{0.021\widthcm} % Separation width (white space) between columns
+\setlength{\onecolwid}{0.3\widthcm} % Width of one column
+\setlength{\twocolwid}{0.4\widthcm} % Width of two columns
+\setlength{\threecolwid}{0.69\widthcm} % Width of three columns
+\setlength{\topmargin}{-0.5in} % Reduce the top margin size
+%-----------------------------------------------------------
+
+\usepackage{graphicx}  % Required for including images
+
+\usepackage{booktabs} % Top and bottom rules for tables
+\usepackage{amsmath}
+\usepackage{array}
+\usepackage[export]{adjustbox}
+\usepackage{wrapfig}
+% \usepackage{caption} 
+% \captionsetup[table]{skip=10pt}
+
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION 
+%----------------------------------------------------------------------------------------
+
+\title{Convolutional Neural Networks for Spot Detection} % Poster title
+
+\subtitle{Applied to Fluorescent Microscopy Images} % Author(s)
+
+\author{Jared Galloway$^1$, Nick Wagner$^1$, Annie Wang$^1$, Jake Searcy$^2$, Sarah Stednitz$^3$, Philip Washbourne$^4$} % Institution(s)
+\institute{1. BGMP, University of Oregon 2. RACS, University of Oregon 3. Max Planck Institute for Biological Cybernetic}
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+\addtobeamertemplate{block end}{}{\vspace*{2ex}} % White space under blocks
+\addtobeamertemplate{block alerted end}{}{\vspace*{2ex}} % White space under highlighted (alert) blocks
+
+\setlength{\belowcaptionskip}{2ex} % White space under figures
+\setlength\belowdisplayshortskip{2ex} % White space under equations
+
+\begin{frame}[t] % The whole poster is enclosed in one beamer frame
+
+\begin{columns}[t] % The whole poster consists of three major columns, the second of which is split into two columns twice - the [t] option aligns each column's content to the top
+
+% \begin{column}{\sepwid}\end{column} % Empty spacer column
+
+\begin{column}{\onecolwid}
+\begin{block}{Abstract}
+\vspace{.2in}
+Spot detection is an important task in many fields such as Biology, Astronomy, and Physics. Unfortunately, the task of counting spots in images can take experts many laborious hours to do by hand. Recent studies (cite) have shown that Machine Learning has potential to automate this task. However, It remains a problem to acquire pixel-level annotations needed as targets for any type of supervised learning.  Here, we have written a dot simulator to emulate fluorescent spots on background noise --  giving us unlimited access to annotated data, and thus allowing users to completely side-step the need for human annotated data sets. Our results exemplify that this method offers a competitive F$_1$ score on empirical, fluorescent microscopy images when compared to other supervised machine learning methods.
+
+\vspace{.4in}
+
+\begin{alertblock}{Fluorescent Confocal Immunolabeling}
+Utilizes fluorescently tagged antibodies to target specific areas within cells, tissue, and organs. This is a very common method in the field of Biology because of how versatile it is. The versatility comes from being able to design both primary and secondary antibodies.
+\end{alertblock}
+    \begin{figure}
+        \includegraphics[width=\linewidth]{zoom_fig_cropped.png}
+        \setlength{\belowcaptionskip}{-20pt}
+        \caption{\textit{Left} shows a 1024 $\times$ 1024 pixel empirical image of only the z channel. For this channel anitibodies were designed to target the synaptotagmin protein that is present during synapse communication. \textit{Right} shows a 64 $\times$ 64 pixel zoomed section that feed into our model for prediction.}
+    \end{figure}
+\end{block}
+
+\begin{alertblock}{Convolutional Neural Networks}
+Convolutional neural networks(CNN) is commonly used for image classification and recognition. It takes in an input image and divides it into small sections. With the small sections, it is able to detect patterns and output to a class.
+\end{alertblock}
+
+\begin{block}{Impact}
+ Using our spot detector, the efficiency at which we are able to annotate these images increases by multiple orders of magnitude. Within the context of Neuroscience, a tool like this would be very beneficial for understanding and measuring synapse formation and communication as an observable phenotypic trait. We could then compare this trait between individuals to learn more about synapse formation and common neurological diseases that are affected by this.
+\end{block}
+
+% 
+
+
+\end{column}
+
+\begin{column}{\onecolwid}
+\begin{block}{Methods}
+    \begin{figure}
+        \includegraphics[width=0.8\linewidth]{expiremental_flow.png}
+        \setlength{\belowcaptionskip}{-20pt}
+        \caption{
+        %A cartoon representing our experimental workflow to train 
+        %a convolutional neural network on simulated images. 
+        Part 1 (\textit{top}) describes the simulation and training procedure 
+        - Each simulation is a pair of both the noisy image, $x_{i}$ and its respective ground truth binary annotation $y_{i}$. These data set are then used to fit our convnet to produce a predictive model. Part 2 (\textit{bottom}) shows an empirical image (in our case a confocal fluoresce image) being fed into the same model to produce a prediction for synapse location.}
+    \end{figure}
+\end{block}
+
+\begin{block}{Simulation}
+%Often the natural word follows explicit rules and patterns which we can closely model using known probability distributions and heuristic patterns. 
+In our simulations, we modeled fluorescent clusters in confocal images with a 2-dimensional Gaussian ``bump'' scaled by the radius for any given spot. Concretely, given ($x_{f}, y_{f}$) describing the focal point for a bump, the activation of any pixel ($x_{p}, y_{p}$) -- within a dot of radius $r$ and distance to focal point $d = \sqrt{(x_{f} - x_{p})^{2} + (y_{f} - y_{p})^{2}}$ -- is described as such:
+
+\Large
+\begin{equation}
+    A(r,d) = e^{\frac{\ln{10}}{r^{2}}d^{2}} + \mathcal{N}(\mu = 0,\,\sigma^{2})
+\end{equation}
+\normalsize
+\vspace{0.1in}
+
+Where $\sigma$ is provided by the user as a parameter to our simulator.
+Both the number of dots in any given image, and the radius of any \textit{one} dot are pulled from a binomial distribution, where $n$, and $p$, are parameters provided by the user. Once the number of dots are chosen, the simulator uniformly places focal points in the given dimensions for an $M \times N$ pixel image. Finally, Background noise for any pixel not in the radius of a dot is pulled from a Gaussian distribution.
+
+\end{block}
+
+\begin{block}{Our Model}
+
+
+    \begin{figure}
+        \includegraphics[width=1.0\linewidth]{Model.pdf}
+        \setlength{\belowcaptionskip}{-20pt}
+        \caption{
+        %Feature Map plot showing the architecture of our convolutional neural network. 
+        With no down-sampling or pooling, we have three convolutional layers with and 64, 32, and 1 filters, respectively. Each layer has a 3X3 kernel, the first two with leakyReLU activation and the final probability map with a sigmoid activation. Finally, we use binary crossentropy loss function and adam optimizer}
+    \end{figure}
+
+%Outside of attaining a sufficient data set, spot detection
+%is a relatively strait-forward problem to solve for neural networks - It simply needs to recognise and parse noise from activation patterns with more structure. Therefore, a model for doing this need not be overly complex. Here, we use a model with three convolutional layers -
+
+\end{block}
+
+\end{column}
+
+\begin{column}{\onecolwid}
+\begin{block}{Results}
+
+This section focuses on the results and the validation of the algorithm. We chose F$_1$ score as our metric for validation because it balances between precision and recall, which is explained in the box below.
+\vspace{.5in}
+    \begin{alertblock}{F$_1$ Score}
+    F$_1$ score is one of the most common metrics when assessing a machine learning algorithm. It is defined as the harmonic mean of precision and recall, as shown below. In other words, it measures the exactness and completeness of the algorithm. The range of F$_1$ score is from 0 to 1, where 1 is the best score and 0 is the worst.
+  
+      \begin{equation}
+            F_1 =\frac{2}{\frac{1}{\text{precision}}+\frac{1}{\text{recall}}}
+        \end{equation}
+    \end{alertblock}
+    
+    \begin{figure}
+        \includegraphics[width=1.0\linewidth]{Final_Results.pdf}
+         \setlength{\belowcaptionskip}{-30pt}
+        \caption{ A panel of results for an empirical image and a simulation image including a 64 $\times$ 64 section of the original image, a true annotation and a machine prediction. The first row is the empirical image. The bright dots in this row represent the synapses. It is clear that the prediction captures the bright dots and excludes the noisy background. As a result, the F$_1$ for empirical image is 0.86. The second row is the simulation which has a F$_1$ score of 1.0. This means that our algorithm picks out all of the bright spots and no background noise.}
+    \end{figure}
+    \vspace{.5in}
+
+    \begin{table}[h]
+        \setlength{\tabcolsep}{40pt}
+        \centering
+        %\begin{tabular}{|m{5cm}>{\centering}|m{5cm}>{\centering}|m{5cm}>{\centering}|m{5cm}>{\centering}|}
+        \begin{tabular}{|c|c|c|c|}
+            \hline
+            Software & Precision & Recall & F$_1$ Score \\
+            \hline
+            GoogleNet & 0.833 & 0.751 & 0.784 \\
+            \hline
+            AlexNet & 0.842 & 0.703 & 0.758 \\
+            \hline
+            detectSpot & 0.836 & 0.740 & 0.782 \\
+            \hline
+            \textbf{SimuSpot} & \textbf{0.762}  & \textbf{0.895} & \textbf{0.824} \\
+            \hline
+        \end{tabular}
+        \caption{ A table comparing our method, \textbf{simuspot}, to other spot detection results. The results from all other methods were trained and tested on different simulated data - we are simply reporting and comparing results to a study that can be found in Mabaso et. al. 2018.}
+    \end{table}
+
+    \begin{block}{Future Directions}
+
+        % \begin{figure}
+        % \includegraphics[scale=0.4]{frame.png}
+        %  \setlength{\belowcaptionskip}{-20pt}
+        % \end{figure}
+        \begin{wrapfigure}{r}{0.1\textwidth}
+        \centering
+    \includegraphics[scale=0.4]{frame.png}
+\end{wrapfigure}
+    The future directions of this tool are to continue to improve the simulator with more parameters such that it is able to more accurately represent the more difficult channels, Synapsin and Gephyrin. With more customization our tool will be able to be applied to many other problems and types of fluorescent images.
+
+    \end{block}
+
+\end{block}
+\end{column}
+
+\end{columns}
+% \begin{beamercolorbox}[wd=41in,colsep=0.15cm]{cboxb}\end{beamercolorbox}
+\end{frame} % End of the enclosing frame
+\end{document}
+
